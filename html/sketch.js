@@ -2,7 +2,7 @@ let mic, fft, bg;
 
 let w; //width of each band
 let smooth = 0.9; //smoothing value (0 - 1)
-let bands = 2048; //number of bands
+let bands = 64; //number of bands
 
 function preload() {
     bg = loadImage('image.png');
