@@ -7,9 +7,9 @@ if (logging) {
         console.log('\x1b[31m' + '--> ' + '\x1b[33m' + 'Express' + '\x1b[0m');
     }
     console.log('.'); //Start Spacer
-    console.log('+==========================+');
-    console.log('|  Starting EQ by ' + '\x1b[36m%s\x1b[0m', 'AllTWay' + '\x1b[0m', ' |');
-    console.log('+==+=======================+');
+    console.log('+=================================+');
+    console.log('|  Starting Visual EQ by ' + '\x1b[36m%s\x1b[0m', 'AllTWay' + '\x1b[0m', ' |');
+    console.log('+==+==============================+');
 } else {
     console.log('Starting EQ by ' + '\x1b[36m%s\1', 'AllTWay' + '\x1b[0m');
 }
@@ -24,7 +24,7 @@ var fs = require('fs');
 var express = require('express');
 
 var ifaces = os.networkInterfaces();
-var app = express();
+var server = express();
 
 //LOCAL IPV4 DETECTION
 'use strict';
@@ -50,19 +50,19 @@ Object.keys(ifaces).forEach(function(ifname) {
 });
 
 //START HTML SERVER
-app.use(express.static(__dirname + "/html")); //Prevents MIME TYPE error by making html directory static and therefore usable
+server.use(express.static(__dirname + "/html")); //Prevents MIME TYPE error by making html directory static and therefore usable
 
-app.get('/', function(req, res) {
+server.get('/', function(req, res) {
     res.statusCode = 200;
-    res.sendFile('./html/index.html', { root: __dirname })
+    res.sendFile('html/index.html', { root: __dirname })
     res.setHeader('Content-Type', 'text/html');
     res.end();
 });
 
-app.get('*', function(req, res) { res.redirect('/'); }); //Redirects any incorrect links to main page
+server.get('*', function(req, res) { res.redirect('/'); }); //Redirects any incorrect links to main page
 
-app.listen(PORT, () => {
-    console.log(`C4 Server running on port ${PORT}.`);
+server.listen(PORT, () => {
+    console.log(`Visual EQ Server running on port ${PORT}.`);
 });
 
 //Extra Logging
