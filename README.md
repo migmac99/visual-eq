@@ -3,12 +3,28 @@
 
 This project is a visual equalizer that runs on a nodejs server in a raspberry pi, the visualiser is rendered through [P5.js](https://p5js.org/ "Processing JS")
 
+- [visual-eq](#visual-eq)
+  - [Installing Node](#installing-node)
+  - [Running a node server on startup](#running-a-node-server-on-startup)
+  - [Booting Chromium into kiosk mode on start up](#booting-chromium-into-kiosk-mode-on-start-up)
+  - [Monitoring the system...](#monitoring-the-system)
+    - [Disk space usage:](#disk-space-usage)
+    - [Cpu and memory usage:](#cpu-and-memory-usage)
+  - [PM2](#pm2)
+    - [Installing PM2](#installing-pm2)
+    - [Starting your server through PM2](#starting-your-server-through-pm2)
+    - [List running apps](#list-running-apps)
+    - [Monitor all apps](#monitor-all-apps)
+    - [Startup script](#startup-script)
+  - [Other Issues](#other-issues)
+    - [Temporary failure resolving...](#temporary-failure-resolving)
+  
+
 To-Do:
 - [X] HTML/JS FFT Renderer
 - [X] Node.js server running the visual eq
 - [ ] Spotify Integration
 - [ ] Artist/Song information option
-
 
 
 ## Installing Node
@@ -159,3 +175,66 @@ watch -n 1 df -h
 ```
 htop
 ```
+
+
+## PM2
+
+### Installing PM2
+
+I am using pm2 to monitor and auto-start the node.js server on startup.
+
+Install pm2
+```
+sudo npm install pm2 -g
+```
+
+If you can't install pm2 because of an outdated npm version try updating to the latest npm by doing `sudo npm install npm@latest -g`
+
+### Starting your server through PM2
+Make sure you are in the directory of the project `cd visual-eq`
+* `--watch` will automatically watch & restart the app on any file change from the current directory + all subfolders
+```
+pm2 start server.js --watch
+```
+
+### List running apps
+Use this to list all current apps on pm2 and respective status
+```
+pm2 [list|ls|status]
+```
+
+### Monitor all apps
+Use this to live monitor any apps terminal feeds
+```
+pm2 monit
+```
+### Startup script
+Restarting PM2 with the processes you manage on server boot/reboot is critical. To solve this, just run this command to generate an active startup script:
+```
+pm2 startup
+```
+To execute the Startup Script, copy/paste the given command (after doing `pm2 startup`)
+
+And to freeze a process list for automatic respawn:
+```
+pm2 save
+```
+
+
+
+
+## Other Issues
+
+### Temporary failure resolving...
+I couldn't apt-get while running ssh.
+I found the answer to my problem in a forum. It's a DNS problem;
+On the command line type:
+```
+sudo nano /etc/resolv.conf
+```
+and then add the lines to the file:
+```
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
+> (Google DNS)
