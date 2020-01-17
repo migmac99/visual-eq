@@ -1,2 +1,161 @@
 # visual-eq
-AllTWay Visual EQ for raspberry pi
+**AllTWay Visual EQ for raspberry pi**
+
+This project is a visual equalizer that runs on a nodejs server in a raspberry pi, the visualiser is rendered through [P5.js](https://p5js.org/ "Processing JS")
+
+To-Do:
+- [X] HTML/JS FFT Renderer
+- [X] Node.js server running the visual eq
+- [ ] Spotify Integration
+- [ ] Artist/Song information option
+
+
+
+## Installing Node
+
+
+Update the package manager.
+```
+sudo apt update
+```
+The apt update command doesn't actually update anything, it just downloads the most up to date packages. So to install them, run:
+```
+sudo apt full-upgrade
+```
+
+Once the package manager is up to date, you can go ahead and download Node, followed by the install command.
+
+```
+sudo apt-get install nodejs
+```
+To verify your node version type:
+```
+node -v
+```
+
+## Running a node server on startup
+
+Before we can run the Node server you will need to have the application installed on your Pi. Presuming you have your project on github already, you can get its https address and clone it into your Pi's home folder using the following command.
+```
+https://github.com/migmac99/visual-eq.git
+```
+
+
+Next, change directory into that folder using the following commands to install all of your projects dependencies.
+
+```
+cd /home/pi/visual-eq
+```
+```
+npm install
+```
+
+Now, make sure everything is working by starting up your Node server. Usually this is the command `node server` but it may be `npm start`.
+```
+node server
+```
+
+Once your server is running, you can go ahead and create a server file. Create this in the systemd directory using the following command:
+```
+sudo nano /etc/systemd/system/node-server.service
+```
+Then add the following code replacing the path to `visual-eq` in the WorkingDirectory and ExecStart lines with the path to your Node application. The Exec start line in the example is the equivalent to running the command `node server.js` so you may need to change this to `ExecStart=/usr/bin/npm start` if you start your project with the `npm start` command.
+```
+[Service]
+WorkingDirectory=/home/pi/some_awesome_project
+ExecStart=/usr/local/bin/node --expose-gc /home/pi/some_awesome_project/server.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=nodeServer
+User=root
+Group=root
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+Exit nano with `ctrl + x` and press `Y` to save the file. You can then activate the system file with the following command:
+```
+sudo systemctl enable node-server
+```
+
+To check that it worked, reboot your Pi using `sudo reboot` and once it has loaded back up, use the browser navigate to the port that your server usually runs on, eg: `http://localhost:8000` and you should see your Node application running.
+
+## Booting Chromium into kiosk mode on start up
+
+The last step in the process is to boot the chromium-browser into kiosk mode to show your Node application full screen. To do this you need to add one line of code to the autostart file. To edit your autostart file, use the following command:
+```
+sudo nano /home/pi/.config/lxsession/LXDE-pi/autostart
+```
+If this returns `home/pi/.config/lxsession/autostart does not exist` then try the following:
+```
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+```
+
+```
+```
+
+The first 3 lines prevent screen blanking - for one project I am using a touch screen so these could be removed to preserve life and make it wake on touch.
+
+The `sed` line ensures chromium thinks it shut down cleaning, even if it didn't to prevent tab restore warnings.
+
+```
+@xset s off
+@xset -dpms
+@xset s noblank
+@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
+```
+
+Add the following line to the bottom of the file. 
+ 
+* `--kiosk` Removes the frame and makes it full screen.
+* `--incognito` Means that it doesn't remember sessions, so if you pull the power chord out of your Pi, you won't get a warning next time you boot up Chromium.
+* `--noerrdialogs` Suppresses all error dialogs when present.
+* More arguments can be found [here](https://peter.sh/experiments/chromium-command-line-switches/ "List of Chromium Command Line Switches") 
+ 
+> Remember to change the port to whatever your node server is running on. If you're not running a node server, you can change the http address to any website address.
+```
+@chromium-browser --noerrdialogs --kiosk http://localhost:8000 --incognito
+```
+If you want to remove the mouse pointer you can install unclutter and again add that to the autostart file. Install unclutter using the following command:
+```
+sudo apt-get install unclutter
+```
+Again, open your autostart file:
+```
+nano /home/pi/.config/lxsession/LXDE-pi/autostart
+```
+If this returns `home/pi/.config/lxsession/autostart does not exist` then try the following:
+```
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+```
+
+and add the following line to the bottom:
+```
+@unclutter -idle 0.1 -root
+```
+
+My final file consisted of this:
+```
+@xset s off
+@xset -dpms
+@xset s noblank
+@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
+@chromium-browser --noerrdialogs --kiosk http://localhost:8000 --incognito
+@unclutter -idle 0.1 -root
+```
+
+## Monitoring the system...
+
+### Disk space usage:
+```
+watch -n 1 df -h
+```
+`-n 1` is the time between refreshes
+`-h` displays units in `K | M | G` instead of bytes 
+
+### Cpu and memory usage:
+```
+htop
+```
