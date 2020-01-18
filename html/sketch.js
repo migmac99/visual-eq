@@ -1,4 +1,4 @@
-let mic, fft, bg;
+let mic, fft, canvas, bg;
 
 let w; //width of each band
 let smooth = 0.9; //smoothing value (0 - 1)
@@ -9,17 +9,24 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
-
-    image(bg, 0, 0);
-
-    colorMode(HSB);
-    angleMode(DEGREES);
-
     mic = new p5.AudioIn();
     mic.start();
     fft = new p5.FFT(smooth, bands);
     fft.setInput(mic);
+
+    settings();
+}
+
+function windowResized() {
+    settings();
+}
+
+function settings() {
+    canvas = createCanvas(windowWidth, windowHeight);
+    canvas.style('z-index', '-1')
+
+    image(bg, 0, 0);
+
     w = width / bands;
     ww = -width / bands;
 }
