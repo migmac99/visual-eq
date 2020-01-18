@@ -1,5 +1,5 @@
 # visual-eq
-**AllTWay Visual EQ for raspberry pi**
+**AllTWay Visual EQ for Raspberry PI**
 
 This project is a visual equalizer that runs on a nodejs server in a raspberry pi, the visualiser is rendered through [P5.js](https://p5js.org/ "Processing JS")
 

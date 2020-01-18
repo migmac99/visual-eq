@@ -6,6 +6,8 @@ body {
     margin: 0;
     background-color: rgb(0, 0, 0);
     font-size: 0;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 svg {
@@ -40,4 +42,30 @@ path {
     stroke-linecap: square;
     stroke: white;
     stroke-width: 0.2px;
+}
+
+.title {
+    font-family: Segoe UI;
+    color: white;
+    font-size: 20px;
+    font-weight: 100;
+    position: fixed;
+    left: 50px;
+    bottom: 70px;
+    width: 100%;
+    color: white;
+    text-align: left;
+}
+
+.artist {
+    font-family: Segoe UI;
+    color: white;
+    font-size: 20px;
+    font-weight: 500;
+    position: fixed;
+    left: 50px;
+    bottom: 50px;
+    width: 100%;
+    color: white;
+    text-align: left;
 }
