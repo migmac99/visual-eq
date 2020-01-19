@@ -1,18 +1,17 @@
-let mic, fft, canvas, bg;
+let mic, fft, canvas, logo;
 
 let w; //width of each band
 let smooth = 0.9; //smoothing value (0 - 1)
-let bands = 64; //number of bands
+let bandspace = 10; //space between bands
+let imagesize = 3;
 
 function preload() {
-    bg = loadImage('image.png');
+    logo = loadImage('logo.svg');
 }
 
 function setup() {
     mic = new p5.AudioIn();
     mic.start();
-    fft = new p5.FFT(smooth, bands);
-    fft.setInput(mic);
 
     settings();
 }
@@ -23,30 +22,29 @@ function windowResized() {
 
 function settings() {
     canvas = createCanvas(windowWidth, windowHeight);
-    canvas.style('z-index', '-1')
+    canvas.style('z-index', '-1');
 
-    image(bg, 0, 0);
+    w = bandspace;
+    bands = width / bandspace;
 
-    w = width / bands;
-    ww = -width / bands;
+    fft = new p5.FFT(smooth, highestPowerof2(bands));
+    fft.setInput(mic);
 }
 
 function draw() {
-    // document.querySelectorAll("p5Canvas").forEach(element => element.style.backgroundImage = "url(image.png)");
-    background(bg);
+    background('black');
+
+    imageMode(CENTER);
+    image(logo, windowWidth / 2, windowHeight / 2, windowHeight / imagesize, windowHeight / imagesize);
+
     var spectrum = fft.analyze();
-    // console.log(spectrum);
 
     stroke(255);
-    // noStroke();
 
     // Left Side
     for (var i = 0; i < spectrum.length; i++) {
         var amp = spectrum[i];
         var y = map(amp, 0, 256, height, 0);
-
-        // fill(i, 255, 255);
-        // rect(i * w, y, w, height - i);
 
         line(i * w, height, i * w, y);
     }
@@ -56,10 +54,7 @@ function draw() {
         var amp = spectrum[i];
         var y = map(amp, 0, 256, height, 0);
 
-        // fill(i, 255, 255);
-        // rect(i * w, y, w, height - i);
-
-        line(i * ww + width, height, i * ww + width, y);
+        line(i * (-w) + width, height, i * (-w) + width, y);
     }
 }
 
@@ -67,4 +62,10 @@ function touchStarted() {
     if (getAudioContext().state !== 'running') {
         getAudioContext().resume();
     }
+}
+
+function highestPowerof2(n) {
+    var p = round((Math.log(n) / Math.log(2)));
+
+    return round(Math.pow(2, p));
 }
