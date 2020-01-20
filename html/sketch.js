@@ -1,6 +1,8 @@
 let mic, fft, canvas, logo, settings, smooth, bandspace, imagesize, save_settings;
-
 let image_path, bg_r, bg_g, bg_b;
+
+let settingsEnabled = true;
+let hasRunMouse = false;
 
 function preload() {
     settings = loadJSON("settings.json"); //Load settings
@@ -28,8 +30,13 @@ function setup() {
     //Button creation
     save_settings = createButton('Save Settings');
     save_settings.class('button');
-    // save_settings.position(19, 19);
-    save_settings.mousePressed(SaveCurrent);
+    save_settings.mousePressed(saveCurrent);
+
+    //Move inside div with id="settings"
+    smooth.parent('settings');
+    bandspace.parent('settings');
+    imagesize.parent('settings');
+    save_settings.parent('settings');
 
     //Loading settings.json values
     smooth.value(settings.smooth);
@@ -39,6 +46,9 @@ function setup() {
     //refresh() on slider input change
     smooth.input(refresh);
     bandspace.input(refresh);
+
+    //Clear positions
+    toggleSettings();
 
     refresh();
 }
@@ -55,6 +65,14 @@ function refresh() {
 
     fft = new p5.FFT(smooth.value(), highestPowerof2(bands));
     fft.setInput(mic);
+
+    //Settings positioning
+    smooth.position(((windowWidth / 2) - (smooth.width / 2)), windowHeight - 250);
+    // createElement('div', 'Smoothing').parent('settings').child(smooth);
+
+    bandspace.position(((windowWidth / 2) - (bandspace.width / 2)), windowHeight - 200);
+    imagesize.position(((windowWidth / 2) - (imagesize.width / 2)), windowHeight - 150);
+    save_settings.position(((windowWidth / 2) - (save_settings.width / 2) - 7.5), windowHeight - 100);
 }
 
 function draw() {
@@ -66,6 +84,19 @@ function draw() {
     var spectrum = fft.analyze();
 
     stroke(255);
+
+    //Toggle Settings overlay on right click
+    if (mouseIsPressed) {
+        if (mouseButton == RIGHT) {
+            if (!hasRunMouse) {
+                toggleSettings();
+                hasRunMouse = true;
+            }
+        }
+    } else {
+        hasRunMouse = false;
+    }
+
 
     // Left Side
     for (var i = 0; i < spectrum.length; i++) {
@@ -96,7 +127,7 @@ function highestPowerof2(n) {
     return round(Math.pow(2, p));
 }
 
-function SaveCurrent() {
+function saveCurrent() {
     settings = {
         image_path: image_path,
         smooth: str(smooth.value()),
@@ -106,12 +137,38 @@ function SaveCurrent() {
         bg_g: bg_g,
         bg_b: bg_b
     };
+    console.log('Settings: \n' + JSON.stringify(settings, null, 2));
 
     var data = JSON.stringify(settings);
-    console.log(data);
 
     var blank = window.open(getURL() + "update-settings/" + data);
-    setTimeout(() => { blank.close(); }, 500);
+    setTimeout(() => { blank.close(); }, 100);
 
-    console.log(getURL() + "update-settings/" + data);
+    // console.log(getURL() + "update-settings/" + data);
+}
+
+// function toggleSettings() {
+//     settingsEnabled = !settingsEnabled;
+
+//     if (settingsEnabled) {
+//         smooth.hide();
+//         bandspace.hide();
+//         imagesize.hide();
+//         save_settings.hide();
+//     } else {
+//         smooth.show();
+//         bandspace.show();
+//         imagesize.show();
+//         save_settings.show();
+//     }
+// }
+
+function toggleSettings() {
+    settingsEnabled = !settingsEnabled;
+
+    if (settingsEnabled) {
+        document.getElementById("settings").style.display = "block";
+    } else {
+        document.getElementById("settings").style.display = "none";
+    }
 }

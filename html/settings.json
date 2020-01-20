@@ -2,8 +2,8 @@
   "image_path": "logo.svg",
   "smooth": "0.9",
   "bandspace": "16",
-  "imagesize": "3.5",
-  "bg_r": "255",
+  "imagesize": "4",
+  "bg_r": "0",
   "bg_g": "0",
   "bg_b": "0"
 }

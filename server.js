@@ -64,6 +64,7 @@ server.get('/', function(req, res) {
     res.end();
 });
 
+//Retrieves the data from URI and updates settings.json
 server.get('/update-settings/:data', async function(req, res) {
 
     var data = String(req.params.data);
@@ -90,7 +91,7 @@ function Finished(err) {
     if (err)
         console.log('error', err.message, err.stack)
     else
-        console.log('Successfully done!');
+        console.log('\x1b[32m' + 'Successfully done! \n' + '\x1b[0m');
 }
 
 //Extra Logging
