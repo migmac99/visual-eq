@@ -1,0 +1,9 @@
+{   
+    "image_path":"logo.svg",
+    "smooth":"0.8",
+    "bandspace":"10",
+    "imagesize":"3",
+    "bg_r":"255",
+    "bg_g":"0",
+    "bg_b":"0"
+}

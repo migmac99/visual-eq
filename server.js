@@ -21,6 +21,11 @@ const PORT = 8000; //server port [80 is default for web]
 var os = require('os');
 var fs = require('fs');
 
+//
+var data = fs.readFileSync('html/settings.json');
+var words = JSON.parse(data);
+//
+
 var express = require('express');
 
 var ifaces = os.networkInterfaces();
@@ -59,11 +64,34 @@ server.get('/', function(req, res) {
     res.end();
 });
 
+server.get('/update-settings/:data', async function(req, res) {
+
+    var data = String(req.params.data);
+    var settings_obj = JSON.parse(data);
+
+    if (logging) {
+        console.log('Saving new Settings to settings.json \n');
+        console.log(settings_obj);
+        console.log();
+    }
+
+    var settings = JSON.stringify(settings_obj, null, 2);
+    fs.writeFile('html/settings.json', settings, Finished);
+});
+
 server.get('*', function(req, res) { res.redirect('/'); }); //Redirects any incorrect links to main page
 
 server.listen(PORT, () => {
-    console.log(`Visual EQ Server running on port ${PORT}.`);
+    console.log(`Visual EQ Server running on port ${PORT}.\n`);
 });
+
+//Callback to catch any error exceptions
+function Finished(err) {
+    if (err)
+        console.log('error', err.message, err.stack)
+    else
+        console.log('Successfully done!');
+}
 
 //Extra Logging
 if (logging) {
