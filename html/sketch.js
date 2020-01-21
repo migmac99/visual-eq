@@ -4,6 +4,11 @@ let image_path, bg_r, bg_g, bg_b;
 let settingsEnabled = true;
 let hasRunMouse = false;
 
+let setting_space = 60; //Space between each setting (vertically)
+let _setting_space = 200; //Space between each setting (horizontally)
+let setting_start = 70; //Where to start on the screen (0 is top of the page)
+let _setting_start = setting_start - 35; //Space bewtween setting and legend (vertically)
+
 function preload() {
     settings = loadJSON("settings.json"); //Load settings
 }
@@ -18,14 +23,14 @@ function setup() {
 
     //Save settings in local vars
     image_path = settings.image_path;
-    bg_r = settings.bg_r;
-    bg_g = settings.bg_g;
-    bg_b = settings.bg_b;
 
     //Slider creation
-    smooth = createSlider(0, 1, 0, 0.1); //smoothing value (0 - 1)
+    smooth = createSlider(0.8, 0.99, 0, 0.01); //smoothing value (0 - 1)
     bandspace = createSlider(0, 50, 0, 1); //space between bands
     imagesize = createSlider(0, 10, 0, 0.5); //Size of the image (lower the higher)
+    bg_r = createSlider(0, 255, 0, 1);
+    bg_g = createSlider(0, 255, 0, 1);
+    bg_b = createSlider(0, 255, 0, 1);
 
     //Button creation
     save_settings = createButton('Save Settings');
@@ -36,18 +41,27 @@ function setup() {
     smooth.parent('settings');
     bandspace.parent('settings');
     imagesize.parent('settings');
+    bg_r.parent('image_color');
+    bg_g.parent('image_color');
+    bg_b.parent('image_color');
     save_settings.parent('settings');
 
     //Loading settings.json values
     smooth.value(settings.smooth);
     bandspace.value(settings.bandspace);
     imagesize.value(settings.imagesize);
+    bg_r.value(settings.bg_r);
+    bg_g.value(settings.bg_g);
+    bg_b.value(settings.bg_b);
 
     //refresh() on slider input change
     smooth.input(refresh);
     bandspace.input(refresh);
+    bg_r.input(refresh);
+    bg_g.input(refresh);
+    bg_b.input(refresh);
 
-    //Clear positions
+    createSettingsLegends();
     toggleSettings();
 
     refresh();
@@ -67,16 +81,19 @@ function refresh() {
     fft.setInput(mic);
 
     //Settings positioning
-    smooth.position(((windowWidth / 2) - (smooth.width / 2)), windowHeight - 250);
-    // createElement('div', 'Smoothing').parent('settings').child(smooth);
+    smooth.position(((windowWidth / 2) - (smooth.width / 2)), (setting_start + (setting_space * 1)));
+    bandspace.position(((windowWidth / 2) - (bandspace.width / 2)), (setting_start + (setting_space * 2)));
+    imagesize.position(((windowWidth / 2) - (imagesize.width / 2)), (setting_start + (setting_space * 3)));
 
-    bandspace.position(((windowWidth / 2) - (bandspace.width / 2)), windowHeight - 200);
-    imagesize.position(((windowWidth / 2) - (imagesize.width / 2)), windowHeight - 150);
-    save_settings.position(((windowWidth / 2) - (save_settings.width / 2) - 7.5), windowHeight - 100);
+    bg_r.position(((windowWidth / 2) - (bg_r.width / 2) + _setting_space), (setting_start + (setting_space * 4)));
+    bg_g.position(((windowWidth / 2) - (bg_g.width / 2)), (setting_start + (setting_space * 4)));
+    bg_b.position(((windowWidth / 2) - (bg_b.width / 2) - _setting_space), (setting_start + (setting_space * 4)));
+
+    save_settings.position(((windowWidth / 2) - (save_settings.width / 2) - 7.5), windowHeight - setting_start);
 }
 
 function draw() {
-    background(settings.bg_r, settings.bg_g, settings.bg_b);
+    background(color(bg_r.value(), bg_g.value(), bg_b.value()));
 
     imageMode(CENTER);
     image(logo, windowWidth / 2, windowHeight / 2, windowHeight / imagesize.value(), windowHeight / imagesize.value());
@@ -133,9 +150,9 @@ function saveCurrent() {
         smooth: str(smooth.value()),
         bandspace: str(bandspace.value()),
         imagesize: str(imagesize.value()),
-        bg_r: bg_r,
-        bg_g: bg_g,
-        bg_b: bg_b
+        bg_r: str(bg_r.value()),
+        bg_g: str(bg_g.value()),
+        bg_b: str(bg_b.value())
     };
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
 
@@ -147,22 +164,6 @@ function saveCurrent() {
     // console.log(getURL() + "update-settings/" + data);
 }
 
-// function toggleSettings() {
-//     settingsEnabled = !settingsEnabled;
-
-//     if (settingsEnabled) {
-//         smooth.hide();
-//         bandspace.hide();
-//         imagesize.hide();
-//         save_settings.hide();
-//     } else {
-//         smooth.show();
-//         bandspace.show();
-//         imagesize.show();
-//         save_settings.show();
-//     }
-// }
-
 function toggleSettings() {
     settingsEnabled = !settingsEnabled;
 
@@ -171,4 +172,25 @@ function toggleSettings() {
     } else {
         document.getElementById("settings").style.display = "none";
     }
+}
+
+function createSettingsLegends() {
+    smooth.parent('smooth');
+    createElement('p', 'Smoothing').parent('smooth').position(0, (_setting_start + (setting_space * 1)));
+
+    bandspace.parent('bandspace');
+    createElement('p', 'Space between bands').parent('bandspace').position(0, (_setting_start + (setting_space * 2)));
+
+    imagesize.parent('imagesize');
+    createElement('p', 'Image Size').parent('imagesize').position(0, (_setting_start + (setting_space * 3)));
+
+
+    bg_r.parent('image_color');
+    createElement('p', 'Background Red').parent('image_color').position(_setting_space, (_setting_start + (setting_space * 4)));
+
+    bg_g.parent('image_color');
+    createElement('p', 'Background Green').parent('image_color').position(0, (_setting_start + (setting_space * 4)));
+
+    bg_b.parent('image_color');
+    createElement('p', 'Background Blue').parent('image_color').position(-_setting_space, (_setting_start + (setting_space * 4)));
 }
