@@ -1,7 +1,7 @@
 let mic, fft, filter, normalized;
 let canvas, logo, settings, save_settings;
 
-let smooth, bandspace, image_path, imagesize, bg_r, bg_g, bg_b, eq_size, eq_height, filterFreq, filterRes;
+let smooth, bandspace, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, filterFreq, filterRes;
 
 let settingsEnabled = true;
 let hasRunMouse = false;
@@ -14,6 +14,7 @@ let _setting_start = setting_start - 35; //Space bewtween setting and legend (ve
 let min, max, freq_cleaner;
 
 function preload() {
+    frameRate(60);
     settings = loadJSON("settings.json"); //Load settings
 }
 
@@ -42,8 +43,13 @@ function setup() {
     bg_g = createSlider(0, 255, 0, 1); //Background color (Green)
     bg_b = createSlider(0, 255, 0, 1); //Background color (Blue)
 
+    eq_r = createSlider(0, 255, 0, 1); //Equalizer color (Red)
+    eq_g = createSlider(0, 255, 0, 1); //Equalizer color (Green)
+    eq_b = createSlider(0, 255, 0, 1); //Equalizer color (Blue)
+
     eq_size = createSlider(0, 1, 0, 0.01); //Size of eq based on percentage of the screen
     eq_height = createSlider(0, 1, 0, 0.01); //Vertical position of eq based on percentage of the screen
+    eq_mirrored = createSlider(0, 1, 0, 1).class("toggle");
 
     filterFreq = createSlider(10, 22050, 10, 1);
     filterRes = createSlider(0.001, 50, 0.001, 0.001) // Max 1000
@@ -62,6 +68,10 @@ function setup() {
     bg_g.parent('image_color');
     bg_b.parent('image_color');
 
+    eq_r.parent('eq_color');
+    eq_g.parent('eq_color');
+    eq_b.parent('eq_color');
+
     eq_size.parent('eq');
     eq_height.parent('eq');
 
@@ -74,8 +84,12 @@ function setup() {
     bg_r.value(settings.bg_r);
     bg_g.value(settings.bg_g);
     bg_b.value(settings.bg_b);
+    eq_r.value(settings.eq_r);
+    eq_g.value(settings.eq_g);
+    eq_b.value(settings.eq_b);
     eq_size.value(settings.eq_size);
     eq_height.value(settings.eq_height);
+    eq_mirrored.value(settings.eq_mirrored);
     filterFreq.value(settings.filterFreq);
     filterRes.value(settings.filterRes);
 
@@ -85,8 +99,12 @@ function setup() {
     bg_r.input(refresh);
     bg_g.input(refresh);
     bg_b.input(refresh);
+    eq_r.input(refresh);
+    eq_g.input(refresh);
+    eq_b.input(refresh);
     eq_size.input(refresh);
     eq_height.input(refresh);
+    eq_mirrored.input(refresh);
     filterFreq.input(refresh);
     filterRes.input(refresh);
 
@@ -101,6 +119,20 @@ function windowResized() {
 }
 
 function refresh() {
+    document.getElementById("logo").setAttribute("data", image_path);
+
+    //Change color of svg image
+    let svgObject = document.getElementById('logo');
+    let svg, _svg;
+
+    if (svgObject) {
+        svgObject.addEventListener("load", function() {
+            svg = svgObject.contentDocument;
+            svg.getElementsByTagName('g')[0].style.fill = color(eq_r.value(), eq_g.value(), eq_b.value());
+            // console.log(_svg);
+        }, false);
+    }
+
     canvas = createCanvas(windowWidth, windowHeight);
     canvas.style('z-index', '-1');
 
@@ -120,20 +152,31 @@ function refresh() {
     bg_g.position(((windowWidth / 2) - (bg_g.width / 2)), (setting_start + (setting_space * 4)));
     bg_b.position(((windowWidth / 2) - (bg_b.width / 2) - _setting_space), (setting_start + (setting_space * 4)));
 
-    eq_size.position(((windowWidth / 2) - (eq_size.width / 2) - _setting_space / 2), (setting_start + (setting_space * 5)));
-    eq_height.position(((windowWidth / 2) - (eq_height.width / 2) + _setting_space / 2), (setting_start + (setting_space * 5)));
+    eq_r.position(((windowWidth / 2) - (eq_r.width / 2) + _setting_space), (setting_start + (setting_space * 5)));
+    eq_g.position(((windowWidth / 2) - (eq_g.width / 2)), (setting_start + (setting_space * 5)));
+    eq_b.position(((windowWidth / 2) - (eq_b.width / 2) - _setting_space), (setting_start + (setting_space * 5)));
 
-    filterFreq.position(((windowWidth / 2) - (filterFreq.width / 2) - _setting_space / 2), (setting_start + (setting_space * 6)));
-    filterRes.position(((windowWidth / 2) - (filterRes.width / 2) + _setting_space / 2), (setting_start + (setting_space * 6)));
+    eq_size.position(((windowWidth / 2) - (eq_size.width / 2) - _setting_space / 2), (setting_start + (setting_space * 6)));
+    eq_height.position(((windowWidth / 2) - (eq_height.width / 2) + _setting_space / 2), (setting_start + (setting_space * 6)));
+    eq_mirrored.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 7))); -
+
+    filterFreq.position(((windowWidth / 2) - (filterFreq.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
+    filterRes.position(((windowWidth / 2) - (filterRes.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
 
     save_settings.position(((windowWidth / 2) - (save_settings.width / 2) - 7.5), windowHeight - setting_start);
 }
 
 function draw() {
-    background(color(bg_r.value(), bg_g.value(), bg_b.value()));
+    //Applies colors from Settings (R,G,B)
+    background(color(bg_r.value(), bg_g.value(), bg_b.value())); //Background Color
+    stroke(color(eq_r.value(), eq_g.value(), eq_b.value())); //EQ Color
+    document.getElementById("title").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Title Color
+    document.getElementById("artist").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Artist Color
 
-    imageMode(CENTER);
-    image(logo, windowWidth / 2, windowHeight / 2, windowHeight / imagesize.value(), windowHeight / imagesize.value());
+    // imageMode(CENTER);
+    // logo.parent('logo');
+    // logo.style.fill = "red";
+    // image(logo, windowWidth / 2, windowHeight / 2, windowHeight / imagesize.value(), windowHeight / imagesize.value());
 
 
     // Map mouseX to a the cutoff frequency from the lowest
@@ -147,9 +190,6 @@ function draw() {
     // let spectrum = normalizeArray(fft.analyze());
     // console.log(spectrum);
 
-
-
-    stroke(255);
 
     //Toggle Settings overlay on right click
     if (mouseIsPressed) {
@@ -167,6 +207,27 @@ function draw() {
     max = windowHeight * eq_height.value();
     freq_cleaner = ((spectrum.length / 3) * 2);
 
+    if (eq_mirrored.value() == 1) {
+        strokeWeight(0.1);
+
+        //Left Side
+        for (var i = 0; i < freq_cleaner; i++) {
+            var amp = spectrum[i];
+            var y = map(amp, 0, 256, max, windowHeight + min);
+
+            line(i * bandspace.value(), max, i * bandspace.value(), y);
+        }
+
+        //Right Side
+        for (var i = 0; i < freq_cleaner; i++) {
+            var amp = spectrum[i];
+            var y = map(amp, 0, 256, max, windowHeight + min);
+
+            line(i * (-bandspace.value()) + width, max, i * (-bandspace.value()) + width, y);
+        }
+    }
+
+    strokeWeight(2);
     //Left Side
     for (var i = 0; i < freq_cleaner; i++) {
         var amp = spectrum[i];
@@ -175,7 +236,6 @@ function draw() {
         line(i * bandspace.value(), max, i * bandspace.value(), y);
     }
 
-    // console.log(spectrum.length);
     //Right Side
     for (var i = 0; i < freq_cleaner; i++) {
         var amp = spectrum[i];
@@ -206,7 +266,7 @@ function draw() {
 }
 
 function normalizeArray(_array) {
-    //
+    // var _max =
     // var _max = Math.max(Math.max(_array), 0);
     // return (_array.map(function(_v) { return _v / _max; }));
 }
@@ -232,12 +292,16 @@ function saveCurrent() {
         bg_r: str(bg_r.value()),
         bg_g: str(bg_g.value()),
         bg_b: str(bg_b.value()),
+        eq_r: str(eq_r.value()),
+        eq_g: str(eq_g.value()),
+        eq_b: str(eq_b.value()),
         eq_size: str(eq_size.value()),
         eq_height: str(eq_height.value()),
+        eq_mirrored: str(eq_mirrored.value()),
         filterFreq: str(filterFreq.value()),
         filterRes: str(filterRes.value())
-
     };
+
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
 
     var data = JSON.stringify(settings);
@@ -281,17 +345,31 @@ function createSettingsLegends() {
 
     ////////////////////////////////
 
+    eq_r.parent('image_color');
+    createElement('p', 'EQ Red').parent('eq_color').position(_setting_space, (_setting_start + (setting_space * 5)));
+
+    eq_g.parent('image_color');
+    createElement('p', 'EQ Green').parent('eq_color').position(0, (_setting_start + (setting_space * 5)));
+
+    eq_b.parent('image_color');
+    createElement('p', 'EQ Blue').parent('eq_color').position(-_setting_space, (_setting_start + (setting_space * 5)));
+
+    ////////////////////////////////
+
     eq_size.parent('eq');
-    createElement('p', 'EQ size (screen %)').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 5)));
+    createElement('p', 'EQ size (screen %)').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 6)));
 
     eq_height.parent('eq');
-    createElement('p', 'EQ vertical position (screen %)').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 5)));
+    createElement('p', 'EQ vertical position (screen %)').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 6)));
+
+    eq_mirrored.parent('eq');
+    createElement('p', 'Mirror EQ').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 7)));
 
     ////////////////////////////////
 
     filterFreq.parent('eq');
-    createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 6)));
+    createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
 
     filterRes.parent('eq');
-    createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 6)));
+    createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
