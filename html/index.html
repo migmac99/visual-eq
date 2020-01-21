@@ -7,14 +7,29 @@
     <link rel="stylesheet" href="styles.css">
 
     <script src="p5.min.js"></script>
+    <script src="p5.dom.min.js"></script>
     <script src="p5.sound.min.js"></script>
     <script src="sketch.js"></script>
 </head>
 
-<body>
+<body oncontextmenu="return false;">
     <div class="wrapper">
         <div class="title">Sopas</div>
         <div class="artist">De Leite</div>
+        <!-- <div id="volume"></div> -->
+    </div>
+    <div id="settings">
+        <div class="setting">
+            <p style="font-size: 20px; font-weight: 500;">Right-click to toggle the Settings menu</p>
+            <p>If refresh the page without saving, settings <strong>will be lost!</strong></p>
+        </div>
+        <div id="smooth" class="setting"></div>
+        <div id="bandspace" class="setting"></div>
+        <div id="imagesize" class="setting"></div>
+        <div id="image_color" class="setting"></div>
+        <div id="eq" class="setting"></div>
+        <div id="filter" class="setting"></div>
+        <div id="save_settings" class="setting"></div>
     </div>
 </body>
 
