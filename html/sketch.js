@@ -1,5 +1,5 @@
 let mic, fft, filter, normalized;
-let canvas, logo, svg, svgObject, settings, save_settings;
+let canvas, logo, svg, svgObject, settings, save_server, save_download;
 
 let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, filterFreq, filterRes;
 
@@ -62,9 +62,13 @@ function setup() {
     filterRes = createSlider(0.001, 50, 0.001, 0.001) // Max 1000
 
     //Button creation
-    save_settings = createButton('Save Settings');
-    save_settings.class('button');
-    save_settings.mousePressed(saveCurrent);
+    save_server = createButton(' Save Settings [Server] ');
+    save_server.class('button');
+    save_server.mousePressed(saveServer);
+
+    save_download = createButton(' Download Settings ');
+    save_download.class('button');
+    save_download.mousePressed(saveDownload);
 
     //Move inside div with id="settings"
     smooth.parent('smooth');
@@ -92,7 +96,8 @@ function setup() {
     filterFreq.parent('eq');
     filterRes.parent('eq');
 
-    save_settings.parent('settings');
+    save_server.parent('settings');
+    save_download.parent('settings');
 
     //Loading settings.json values
     smooth.value(settings.smooth);
@@ -197,7 +202,8 @@ function refresh() {
     filterFreq.position(((windowWidth / 2) - (filterFreq.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
     filterRes.position(((windowWidth / 2) - (filterRes.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
 
-    save_settings.position(((windowWidth / 2) - (save_settings.width / 2) - 7.5), windowHeight - setting_start);
+    save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start);
+    save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start);
 }
 
 function draw() {
@@ -322,7 +328,7 @@ function highestPowerof2(n) {
     return round(Math.pow(2, p));
 }
 
-function saveCurrent() {
+function saveServer() {
     settings = {
         image_path: image_path,
         smooth: str(smooth.value()),
@@ -348,11 +354,13 @@ function saveCurrent() {
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
 
     var data = JSON.stringify(settings);
-
     var blank = window.open(getURL() + "update-settings/" + data);
     setTimeout(() => { blank.close(); }, 100);
-
     // console.log(getURL() + "update-settings/" + data);
+}
+
+function saveDownload() {
+    console.log('Sopas');
 }
 
 function toggleSettings() {
