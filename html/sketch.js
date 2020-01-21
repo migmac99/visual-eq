@@ -381,7 +381,3 @@ function createSettingsLegends() {
     createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
     createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
-
-// function touchMoved() {
-//     return false;
-// }
