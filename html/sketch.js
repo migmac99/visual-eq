@@ -156,7 +156,7 @@ function refresh() {
             svg.getElementsByTagName('g')[0].style.fill = color(eq_r.value(), eq_g.value(), eq_b.value());
             svg.getElementsByTagName('svg')[0].setAttribute("width", height * imagesize.value());
             svg.getElementsByTagName('svg')[0].setAttribute("height", height * imagesize.value());
-            console.log(svg.getElementsByTagName('svg')[0].style.width, svg.getElementsByTagName('svg')[0].style.height);
+            // console.log(svg.getElementsByTagName('svg')[0].style.width, svg.getElementsByTagName('svg')[0].style.height);
         }, false);
     }
 
@@ -208,15 +208,13 @@ function draw() {
     document.getElementById("artist").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Artist Color
 
 
-    // Map mouseX to a the cutoff frequency from the lowest
     // frequency (10Hz) to the highest (22050Hz) that humans can hear
-    // filterFreq = map(50, 0, width, 10, 22050);
-    // filterRes = map(mouseY, 0, height, 15, 5);
     filter.set(filterFreq.value(), filterRes.value());
 
-    let spectrum = fft.analyze();
+    // let spectrum = fft.analyze();
+    let multiplier = eq_normalize.value() * (windowHeight / 2);
 
-    // let spectrum = normalizeArray(fft.analyze());
+    let spectrum = normalizeArray(fft.analyze(), multiplier);
     // console.log(spectrum);
 
 
@@ -279,7 +277,9 @@ function draw() {
             line((i * bandspace.value()) + (windowWidth / 2), max, (i * bandspace.value()) + (windowWidth / 2), y);
 
             //Left Side
-            line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
+            if (i > 0) { //Prevents overlapping
+                line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
+            }
         }
 
         if (eq_mirrored.value() == 1) {
@@ -293,32 +293,21 @@ function draw() {
                 line((i * bandspace.value()) + (windowWidth / 2), max, (i * bandspace.value()) + (windowWidth / 2), y);
 
                 //Left Side
-                line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
-
+                if (i > 0) { //Prevents overlapping
+                    line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
+                }
             }
         }
-
-        // for (i = 0; i < spectrum.length; i++) {
-        //     var _spectrum = [];
-        //     _spectrum[i] = spectrum[spectrum.length - i];
-
-        //     min = eq_size.value() * windowHeight;
-        //     max = windowHeight * eq_height.value();
-        //     freq_cleaner = ((_spectrum.length / 3) * 2);
-
-        //     var amp = _spectrum[i];
-        //     var y = map(amp, 0, 256, max, min);
-
-        //     strokeWeight(bandstroke.value());
-        //     line(i * bandspace.value(), max, i * bandspace.value(), y);
-        // }
     }
 }
 
-function normalizeArray(_array) {
-    // var _max =
-    // var _max = Math.max(Math.max(_array), 0);
-    // return (_array.map(function(_v) { return _v / _max; }));
+//Normalizes array, all values are between 0 - 1
+function normalizeArray(_array, multiplier) {
+    if (eq_normalize.value() == 0) {
+        return (_array);
+    } else {
+        return normalize(_array).map(function(x) { return x * multiplier; });;
+    }
 }
 
 function touchStarted() {
