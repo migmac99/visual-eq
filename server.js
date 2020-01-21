@@ -21,11 +21,6 @@ const PORT = 8000; //server port [80 is default for web]
 var os = require('os');
 var fs = require('fs');
 
-//
-var data = fs.readFileSync('html/settings.json');
-var words = JSON.parse(data);
-//
-
 var express = require('express');
 
 var ifaces = os.networkInterfaces();
