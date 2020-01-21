@@ -221,8 +221,8 @@ function draw() {
 
 
     //Toggle Settings overlay on right click
-    if (mouseIsPressed) {
-        if (mouseButton == RIGHT) {
+    if ((mouseIsPressed) || (touches.length >= 2)) {
+        if ((mouseButton == RIGHT) || (touches.length >= 2)) {
             if (!hasRunMouse) {
                 toggleSettings();
                 hasRunMouse = true;
@@ -231,7 +231,6 @@ function draw() {
     } else {
         hasRunMouse = false;
     }
-
 
     if (eq_switched.value() == 0) {
         min = eq_size.value() * windowHeight;
@@ -382,3 +381,7 @@ function createSettingsLegends() {
     createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
     createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
+
+// function touchMoved() {
+//     return false;
+// }
