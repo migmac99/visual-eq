@@ -145,6 +145,10 @@ input[type="range"]::-ms-fill-upper {
     background-color: #2ecc71;
 }
 
+.toggle {
+    width: 40px !important;
+}
+
 #settings {
     position: fixed;
     display: none;
@@ -167,5 +171,14 @@ input[type="range"]::-ms-fill-upper {
     width: 100%;
     color: white;
     text-align: center;
+    pointer-events: none;
+}
+
+.logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
     pointer-events: none;
 }
