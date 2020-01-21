@@ -2,6 +2,14 @@
 <html lang="en">
 
 <head>
+    <script>
+        if (location.hostname != "localhost") {
+            if (location.protocol != 'https:') {
+                location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+            }
+        }
+    </script>
+
     <title>AllTWay Visual EQ</title>
 
     <link rel="stylesheet" href="styles.css">
@@ -16,8 +24,8 @@
     <div class="wrapper">
         <object id="logo" class="logo" type="image/svg+xml"></object>
         <!-- <img id="logo" class="logo"> -->
-        <div id="title" class="title">Sopas</div>
-        <div id="artist" class="artist">De Leite</div>
+        <div id="title" class="title">Song Name</div>
+        <div id="artist" class="artist">Artist</div>
         <!-- <div id="volume"></div> -->
     </div>
     <div id="settings">
@@ -26,7 +34,7 @@
             <p>If refresh the page without saving, settings <strong>will be lost!</strong></p>
         </div>
         <div id="smooth" class="setting"></div>
-        <div id="bandspace" class="setting"></div>
+        <div id="bands" class="setting"></div>
         <div id="imagesize" class="setting"></div>
         <div id="image_color" class="setting"></div>
         <div id="eq_color" class="setting"></div>
