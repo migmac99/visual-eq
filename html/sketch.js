@@ -42,7 +42,7 @@ function setup() {
     bandstroke = createSlider(0.1, 10, 0, 0.1); //EQ StrokeWeight
     bandstroke_mirrored = createSlider(0.1, 10, 0, 0.1); //Mirrored EQ StrokeWeight
 
-    imagesize = createSlider(0, 5, 0, 0.1); //Size of the image (lower the higher)
+    imagesize = createSlider(0.1, 5, 0, 0.1); //Size of the image
 
     bg_r = createSlider(0, 255, 0, 1); //Background color (Red)
     bg_g = createSlider(0, 255, 0, 1); //Background color (Green)
@@ -156,7 +156,7 @@ function refresh() {
             svg.getElementsByTagName('g')[0].style.fill = color(eq_r.value(), eq_g.value(), eq_b.value());
             svg.getElementsByTagName('svg')[0].setAttribute("width", height * imagesize.value());
             svg.getElementsByTagName('svg')[0].setAttribute("height", height * imagesize.value());
-            console.log(svg.getElementsByTagName('svg')[0].style.width, svg.getElementsByTagName('svg')[0].style.height);
+            // console.log(svg.getElementsByTagName('svg')[0].style.width, svg.getElementsByTagName('svg')[0].style.height);
         }, false);
     }
 
@@ -164,7 +164,7 @@ function refresh() {
     canvas.style('z-index', '-1');
 
     // bands = (windowWidth / 2) / bandspace.value();
-    bands = windowWidth / bandspace.value();
+    bands = (windowWidth / bandspace.value()) * (0.95 / 1);
 
 
     fft = new p5.FFT(smooth.value(), highestPowerof2(bands));
@@ -208,15 +208,13 @@ function draw() {
     document.getElementById("artist").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Artist Color
 
 
-    // Map mouseX to a the cutoff frequency from the lowest
     // frequency (10Hz) to the highest (22050Hz) that humans can hear
-    // filterFreq = map(50, 0, width, 10, 22050);
-    // filterRes = map(mouseY, 0, height, 15, 5);
     filter.set(filterFreq.value(), filterRes.value());
 
-    let spectrum = fft.analyze();
+    // let spectrum = fft.analyze();
+    let multiplier = eq_normalize.value() * (windowHeight / 2);
 
-    // let spectrum = normalizeArray(fft.analyze());
+    let spectrum = normalizeArray(fft.analyze(), multiplier);
     // console.log(spectrum);
 
 
@@ -238,64 +236,78 @@ function draw() {
         freq_cleaner = ((spectrum.length / 3) * 2);
 
         strokeWeight(bandstroke.value());
-        //Left Side
+
         for (var i = 0; i < freq_cleaner; i++) {
             var amp = spectrum[i];
             var y = map(amp, 0, 256, max, min);
 
+            //Left Side
             line(i * bandspace.value(), max, i * bandspace.value(), y);
-        }
-        //Right Side
-        for (var i = 0; i < freq_cleaner; i++) {
-            var amp = spectrum[i];
-            var y = map(amp, 0, 256, max, min);
 
+            //Right Side
             line(i * (-bandspace.value()) + width, max, i * (-bandspace.value()) + width, y);
         }
 
         if (eq_mirrored.value() == 1) {
             strokeWeight(bandstroke_mirrored.value());
-            //Left Side
+
             for (var i = 0; i < freq_cleaner; i++) {
                 var amp = spectrum[i];
                 var y = map(amp, 0, 256, max, windowHeight + min);
 
+                //Left Side
                 line(i * bandspace.value(), max, i * bandspace.value(), y);
-            }
-            //Right Side
-            for (var i = 0; i < freq_cleaner; i++) {
-                var amp = spectrum[i];
-                var y = map(amp, 0, 256, max, windowHeight + min);
 
+                //Right Side
                 line(i * (-bandspace.value()) + width, max, i * (-bandspace.value()) + width, y);
             }
         }
+    } else {
+        min = eq_size.value() * windowHeight;
+        max = windowHeight * eq_height.value();
+        freq_cleaner = ((spectrum.length / 3) * 2);
+
+        strokeWeight(bandstroke.value());
+
+        for (var i = 0; i < freq_cleaner; i++) {
+            var amp = spectrum[i];
+            var y = map(amp, 0, 256, max, min);
+
+            //Right Side
+            line((i * bandspace.value()) + (windowWidth / 2), max, (i * bandspace.value()) + (windowWidth / 2), y);
+
+            //Left Side
+            if (i > 0) { //Prevents overlapping
+                line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
+            }
+        }
+
+        if (eq_mirrored.value() == 1) {
+            strokeWeight(bandstroke_mirrored.value());
+
+            for (var i = 0; i < freq_cleaner; i++) {
+                var amp = spectrum[i];
+                var y = map(amp, 0, 256, max, windowHeight + min);
+
+                //Right Side
+                line((i * bandspace.value()) + (windowWidth / 2), max, (i * bandspace.value()) + (windowWidth / 2), y);
+
+                //Left Side
+                if (i > 0) { //Prevents overlapping
+                    line((i * (-bandspace.value()) + width) - (windowWidth / 2), max, (i * (-bandspace.value()) + width) - (windowWidth / 2), y);
+                }
+            }
+        }
     }
-
-    // min = eq_size.value() * windowHeight;
-    // max = windowHeight * eq_height.value();
-    // freq_cleaner = ((spectrum.length / 3) * 2);
-    // //Left Side
-    // for (var i = 0; i < freq_cleaner; i++) {
-    //     var amp = spectrum[i];
-    //     var y = map(amp, 0, 256, max, min);
-
-    //     line(i * bandspace.value(), max, i * bandspace.value(), y);
-    // }
-    // console.log(spectrum.length);
-    // //Right Side
-    // for (var i = 0; i < freq_cleaner; i++) {
-    //     var amp = spectrum[i];
-    //     var y = map(amp, 0, 256, max, min);
-
-    //     line(i * (-bandspace.value()) + width, max, i * (-bandspace.value()) + width, y);
-    // }
 }
 
-function normalizeArray(_array) {
-    // var _max =
-    // var _max = Math.max(Math.max(_array), 0);
-    // return (_array.map(function(_v) { return _v / _max; }));
+//Normalizes array, all values are between 0 - 1
+function normalizeArray(_array, multiplier) {
+    if (eq_normalize.value() == 0) {
+        return (_array);
+    } else {
+        return normalize(_array).map(function(x) { return x * multiplier; });;
+    }
 }
 
 function touchStarted() {
