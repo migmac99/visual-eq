@@ -1,5 +1,5 @@
 let mic, fft, filter, normalized;
-let canvas, logo, svg, svgObject, settings, save_server, save_download;
+let canvas, logo, svg, svgObject, settings, save_server, save_download, uploadSettings;
 
 let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, filterFreq, filterRes;
 
@@ -64,11 +64,16 @@ function setup() {
     //Button creation
     save_server = createButton(' Save Settings [Server] ');
     save_server.class('button');
-    save_server.mousePressed(saveServer);
+    save_server.mousePressed(saveSettings);
 
     save_download = createButton(' Download Settings ');
     save_download.class('button');
     save_download.mousePressed(saveDownload);
+
+    uploadSettings = createButton(' Upload Settings ');
+    uploadSettings.class('button');
+    uploadSettings.mousePressed(loadSettings);
+
 
     //Move inside div with id="settings"
     smooth.parent('smooth');
@@ -98,6 +103,7 @@ function setup() {
 
     save_server.parent('settings');
     save_download.parent('settings');
+    uploadSettings.parent('settings');
 
     //Loading settings.json values
     smooth.value(settings.smooth);
@@ -204,6 +210,7 @@ function refresh() {
 
     save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start);
     save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start);
+    uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start);
 }
 
 function draw() {
@@ -328,7 +335,11 @@ function highestPowerof2(n) {
     return round(Math.pow(2, p));
 }
 
-function saveServer() {
+function saveDownload() {
+    saveSettings(true);
+}
+
+function saveSettings(download = false) {
     settings = {
         image_path: image_path,
         smooth: str(smooth.value()),
@@ -353,14 +364,53 @@ function saveServer() {
 
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
 
-    var data = JSON.stringify(settings);
-    var blank = window.open(getURL() + "update-settings/" + data);
-    setTimeout(() => { blank.close(); }, 100);
-    // console.log(getURL() + "update-settings/" + data);
+    if (!download) {
+        var data = JSON.stringify(settings);
+        var blank = window.open(getURL() + "update-settings/" + data);
+        setTimeout(() => { blank.close(); }, 100);
+        // console.log(getURL() + "update-settings/" + data);
+    } else {
+        saveJSON(settings, 'settings.json');
+    }
 }
 
-function saveDownload() {
-    console.log('Sopas');
+function loadSettings() {
+    console.log('ss');
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file);
+
+        reader.onload = readerEvent => {
+            let content = JSON.parse(readerEvent.target.result);
+
+            smooth.value(content.smooth);
+            bandspace.value(content.bandspace);
+            bandstroke.value(content.bandstroke);
+            bandstroke_mirrored.value(content.bandstroke_mirrored);
+            imagesize.value(content.imagesize);
+            bg_r.value(content.bg_r);
+            bg_g.value(content.bg_g);
+            bg_b.value(content.bg_b);
+            eq_r.value(content.eq_r);
+            eq_g.value(content.eq_g);
+            eq_b.value(content.eq_b);
+            eq_size.value(content.eq_size);
+            eq_height.value(content.eq_height);
+            eq_mirrored.value(content.eq_mirrored);
+            eq_switched.value(content.eq_switched);
+            eq_normalize.value(content.eq_normalize);
+            filterFreq.value(content.filterFreq);
+            filterRes.value(content.filterRes);
+
+            refresh();
+        }
+    }
+    input.click();
 }
 
 function toggleSettings() {
