@@ -1,3 +1,12 @@
+//Normalizes array, all values are between 0 - 1
+function normalizeArray(_array, multiplier) {
+    if (eq_normalize.value() == 0) {
+        return (_array);
+    } else {
+        return normalize(_array).map(function(x) { return x * multiplier; });;
+    }
+}
+
 function normalize(arr, dim, bounds) {
     if (!arr || arr.length == null) throw Error('Argument should be an array')
 

@@ -1,16 +1,6 @@
 let mic, fft, filter, normalized;
 let canvas, logo, svg, svgObject, settings, save_server, save_download, uploadSettings;
 
-let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, filterFreq, filterRes;
-
-let settingsEnabled = true;
-let hasRunMouse = false;
-
-let setting_space = 60; //Space between each setting (vertically)
-let _setting_space = 200; //Space between each setting (horizontally)
-let setting_start = 70; //Where to start on the screen (0 is top of the page)
-let _setting_start = setting_start - 35; //Space bewtween setting and legend (vertically)
-
 let min, max, freq_cleaner;
 
 function preload() {
@@ -40,7 +30,7 @@ function setup() {
     settingsMoveToDivs(); //Move inside div with id="settings"
     settingsLoad(); //Loading settings.json values
     settingsRefreshOnInput(); //refresh() on slider input change
-    createSettingsLegends(); //Creates legends for each setting
+    settingsCreateLegend(); //Creates legends for each setting
     settingsToggle(); //Toggles settings overlay
 
     refresh();
@@ -101,7 +91,7 @@ function draw() {
     let multiplier = eq_normalize.value() * (windowHeight / 2);
 
     // let spectrum = normalizeArray(fft.analyze(), multiplier);
-    let spectrum = smoothArray(fft.analyze());
+    let spectrum = normalizeArray(smoothArray(fft.analyze()), multiplier);
     // console.log(spectrum);
 
 
@@ -175,15 +165,6 @@ function draw() {
                 }
             }
         }
-    }
-}
-
-//Normalizes array, all values are between 0 - 1
-function normalizeArray(_array, multiplier) {
-    if (eq_normalize.value() == 0) {
-        return (_array);
-    } else {
-        return normalize(_array).map(function(x) { return x * multiplier; });;
     }
 }
 

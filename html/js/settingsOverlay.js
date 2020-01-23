@@ -1,3 +1,13 @@
+let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, filterFreq, filterRes;
+
+let settingsEnabled = true;
+let hasRunMouse = false;
+
+let setting_space = 60; //Space between each setting (vertically)
+let _setting_space = 200; //Space between each setting (horizontally)
+let setting_start = 70; //Where to start on the screen (0 is top of the page)
+let _setting_start = setting_start - 35; //Space bewtween setting and legend (vertically)
+
 function settingsRightClick() {
     if ((mouseIsPressed) || (touches.length >= 2)) {
         if ((mouseButton == RIGHT) || (touches.length >= 2)) {
@@ -51,15 +61,15 @@ function settingsCreateSliders() {
 function settingsCreateButtons() {
     save_server = createButton(' Save Settings [Server] ');
     save_server.class('button');
-    save_server.mousePressed(saveSettings);
+    save_server.mousePressed(settingsSave);
 
     save_download = createButton(' Download Settings ');
     save_download.class('button');
-    save_download.mousePressed(saveDownload);
+    save_download.mousePressed(settingsDownload);
 
     uploadSettings = createButton(' Upload Settings ');
     uploadSettings.class('button');
-    uploadSettings.mousePressed(loadSettings);
+    uploadSettings.mousePressed(settingsUpload);
 }
 
 function settingsMoveToDivs() {
@@ -167,7 +177,7 @@ function settingsPosition() {
     uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start);
 }
 
-function createSettingsLegends() {
+function settingsCreateLegend() {
     createElement('p', 'Smoothing').parent('smooth').position(0, (_setting_start + (setting_space * 1)));
 
     createElement('p', 'Space between bands').parent('bands').position(-_setting_space, (_setting_start + (setting_space * 2)));
@@ -193,4 +203,82 @@ function createSettingsLegends() {
 
     createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
     createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
+}
+
+function settingsDownload() {
+    settingsSave(true);
+}
+
+function settingsSave(download = false) {
+    settings = {
+        image_path: image_path,
+        smooth: str(smooth.value()),
+        bandspace: str(bandspace.value()),
+        bandstroke: str(bandstroke.value()),
+        bandstroke_mirrored: str(bandstroke_mirrored.value()),
+        imagesize: str(imagesize.value()),
+        bg_r: str(bg_r.value()),
+        bg_g: str(bg_g.value()),
+        bg_b: str(bg_b.value()),
+        eq_r: str(eq_r.value()),
+        eq_g: str(eq_g.value()),
+        eq_b: str(eq_b.value()),
+        eq_size: str(eq_size.value()),
+        eq_height: str(eq_height.value()),
+        eq_mirrored: str(eq_mirrored.value()),
+        eq_switched: str(eq_switched.value()),
+        eq_normalize: str(eq_normalize.value()),
+        filterFreq: str(filterFreq.value()),
+        filterRes: str(filterRes.value())
+    };
+
+    console.log('Settings: \n' + JSON.stringify(settings, null, 2));
+
+    if (!download) {
+        var data = JSON.stringify(settings);
+        var blank = window.open(getURL() + "update-settings/" + data);
+        setTimeout(() => { blank.close(); }, 100);
+        // console.log(getURL() + "update-settings/" + data);
+    } else {
+        saveJSON(settings, 'settings.json');
+    }
+}
+
+function settingsUpload() {
+    console.log('ss');
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+
+    input.onchange = e => {
+        var file = e.target.files[0];
+        var reader = new FileReader();
+        reader.readAsText(file);
+
+        reader.onload = readerEvent => {
+            let content = JSON.parse(readerEvent.target.result);
+
+            smooth.value(content.smooth);
+            bandspace.value(content.bandspace);
+            bandstroke.value(content.bandstroke);
+            bandstroke_mirrored.value(content.bandstroke_mirrored);
+            imagesize.value(content.imagesize);
+            bg_r.value(content.bg_r);
+            bg_g.value(content.bg_g);
+            bg_b.value(content.bg_b);
+            eq_r.value(content.eq_r);
+            eq_g.value(content.eq_g);
+            eq_b.value(content.eq_b);
+            eq_size.value(content.eq_size);
+            eq_height.value(content.eq_height);
+            eq_mirrored.value(content.eq_mirrored);
+            eq_switched.value(content.eq_switched);
+            eq_normalize.value(content.eq_normalize);
+            filterFreq.value(content.filterFreq);
+            filterRes.value(content.filterRes);
+
+            refresh();
+        }
+    }
+    input.click();
 }
