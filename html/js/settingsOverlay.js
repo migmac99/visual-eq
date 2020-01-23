@@ -1,4 +1,6 @@
-let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize, bg_r, bg_g, bg_b, eq_r, eq_g, eq_b, eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, filterFreq, filterRes;
+let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize;
+let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b;
+let eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, eq_preset, eq_cutoff;
 
 let settingsEnabled = true;
 let hasRunMouse = false;
@@ -54,8 +56,8 @@ function settingsCreateSliders() {
     eq_switched = createSlider(0, 1, 0, 1).class("toggle"); //Switch frequency order
     eq_normalize = createSlider(0, 1, 0, 1).class("toggle"); //Normalize audio data
 
-    filterFreq = createSlider(10, 22050, 10, 1);
-    filterRes = createSlider(0.001, 50, 0.001, 0.001) // Max 1000
+    eq_preset = createSlider(0, 5, 0, 1);
+    eq_cutoff = createSlider(0.01, 1, 0.01, 0.01);
 }
 
 function settingsCreateButtons() {
@@ -95,8 +97,8 @@ function settingsMoveToDivs() {
     eq_switched.parent('eq');
     eq_normalize.parent('eq');
 
-    filterFreq.parent('eq');
-    filterRes.parent('eq');
+    eq_preset.parent('eq');
+    eq_cutoff.parent('eq');
 
     save_server.parent('settings');
     save_download.parent('settings');
@@ -120,8 +122,8 @@ function settingsLoad() {
     eq_mirrored.value(settings.eq_mirrored);
     eq_switched.value(settings.eq_switched);
     eq_normalize.value(settings.eq_normalize);
-    filterFreq.value(settings.filterFreq);
-    filterRes.value(settings.filterRes);
+    eq_preset.value(settings.eq_preset);
+    eq_cutoff.value(settings.eq_cutoff);
 }
 
 function settingsRefreshOnInput() {
@@ -141,8 +143,8 @@ function settingsRefreshOnInput() {
     eq_mirrored.input(refresh);
     eq_switched.input(refresh);
     eq_normalize.input(refresh);
-    filterFreq.input(refresh);
-    filterRes.input(refresh);
+    eq_preset.input(refresh);
+    eq_cutoff.input(refresh);
 }
 
 function settingsPosition() {
@@ -169,8 +171,8 @@ function settingsPosition() {
     eq_switched.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 7)));
     eq_normalize.position(((windowWidth / 2) - 20 + _setting_space / 2), (setting_start + (setting_space * 7)));
 
-    filterFreq.position(((windowWidth / 2) - (filterFreq.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
-    filterRes.position(((windowWidth / 2) - (filterRes.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
+    eq_preset.position(((windowWidth / 2) - (eq_preset.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
+    eq_cutoff.position(((windowWidth / 2) - (eq_cutoff.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
 
     save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start);
     save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start);
@@ -201,8 +203,8 @@ function settingsCreateLegend() {
     createElement('p', 'Switch EQ').parent('eq').position(0, (_setting_start + (setting_space * 7)));
     createElement('p', 'Normalize EQ').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
 
-    createElement('p', 'Filter Frequency Range').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
-    createElement('p', 'Filter Resonance').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
+    createElement('p', 'EQ Preset').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
+    createElement('p', 'EQ Cutoff').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
 
 function settingsDownload() {
@@ -228,8 +230,8 @@ function settingsSave(download = false) {
         eq_mirrored: str(eq_mirrored.value()),
         eq_switched: str(eq_switched.value()),
         eq_normalize: str(eq_normalize.value()),
-        filterFreq: str(filterFreq.value()),
-        filterRes: str(filterRes.value())
+        eq_preset: str(eq_preset.value()),
+        eq_cutoff: str(eq_cutoff.value())
     };
 
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
@@ -245,7 +247,6 @@ function settingsSave(download = false) {
 }
 
 function settingsUpload() {
-    console.log('ss');
     var input = document.createElement('input');
     input.type = 'file';
     input.accept = 'application/json';
@@ -274,8 +275,8 @@ function settingsUpload() {
             eq_mirrored.value(content.eq_mirrored);
             eq_switched.value(content.eq_switched);
             eq_normalize.value(content.eq_normalize);
-            filterFreq.value(content.filterFreq);
-            filterRes.value(content.filterRes);
+            eq_preset.value(content.eq_preset);
+            eq_cutoff.value(content.eq_cutoff);
 
             refresh();
         }

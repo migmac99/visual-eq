@@ -1,7 +1,12 @@
-let mic, fft, filter, normalized;
+let mic, fft;
 let canvas, logo, svg, svgObject, settings, save_server, save_download, uploadSettings;
 
 let min, max, freq_cleaner;
+
+let multiplier, bands;
+
+let _spectrum = [];
+let spectrum = [];
 
 function preload() {
     frameRate(60);
@@ -10,13 +15,8 @@ function preload() {
 
 function setup() {
     //Audio channel connection
-    filter = new p5.LowPass(); //creates a lowPass filter
-
     mic = new p5.AudioIn(); //Request user microphone
     mic.start(); //Start the stream of sound
-
-    filter.process(mic); //Connects the filter to the source
-    filter.disconnect(); //Does not output sound
 
     //Read image from specified file_path from settings.json
     logo = loadImage(settings.image_path);
@@ -65,13 +65,13 @@ function refresh() {
     canvas = createCanvas(windowWidth, windowHeight);
     canvas.style('z-index', '-1');
 
-    // bands = (windowWidth / 2) / bandspace.value();
-    bands = (windowWidth / bandspace.value()) * (0.95 / 1);
+    bands = (windowWidth / 2) / bandspace.value();
+    // bands = (windowWidth / bandspace.value()) * (0.95 / 1);
 
 
-    fft = new p5.FFT(smooth.value(), highestPowerof2(bands));
-    fft.setInput(filter); //Sets the filter as the fft input
-
+    // fft = new p5.FFT(smooth.value(), highestPowerof2(bands));
+    fft = new p5.FFT(smooth.value(), 8192);
+    fft.setInput(mic); //Sets the mic as the fft input
 
     settingsPosition(); //Settings positioning
 }
@@ -83,30 +83,32 @@ function draw() {
     document.getElementById("title").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Title Color
     document.getElementById("artist").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Artist Color
 
+    // multiplier = eq_normalize.value() * (windowHeight);
+    multiplier = eq_normalize.value() * (0.75 * windowHeight);
 
-    // frequency (10Hz) to the highest (22050Hz) that humans can hear
-    filter.set(filterFreq.value(), filterRes.value());
+    let ffta = fft.analyze();
 
-    // let spectrum = fft.analyze();
-    let multiplier = eq_normalize.value() * (windowHeight / 2);
+    _spectrum = ffta.slice(0, (eq_cutoff.value() * ffta.length));
+    spectrum = runAlgorithms(_spectrum, eq_preset.value());
 
-    // let spectrum = normalizeArray(fft.analyze(), multiplier);
-    let spectrum = normalizeArray(smoothArray(fft.analyze()), multiplier);
-    // console.log(spectrum);
+    console.log(_spectrum.length, spectrum.length);
 
+    // spectrum = fft.analyze();
+    // spectrum = runAlgorithms(fft.analyze(), eq_preset.value());
 
     settingsRightClick(); //Toggle Settings overlay on right click
 
     if (eq_switched.value() == 0) {
         min = eq_size.value() * windowHeight;
         max = windowHeight * eq_height.value();
-        freq_cleaner = ((spectrum.length / 3) * 2);
+        // freq_cleaner = ((spectrum.length / 3) * 2);
+        freq_cleaner = bands;
 
         strokeWeight(bandstroke.value());
 
         for (var i = 0; i < freq_cleaner; i++) {
-            var amp = spectrum[i];
-            var y = map(amp, 0, 256, max, min);
+            // var amp = spectrum[i];
+            var y = map(spectrum[i], 0, 256, max, min);
 
             //Left Side
             line(i * bandspace.value(), max, i * bandspace.value(), y);
@@ -132,7 +134,8 @@ function draw() {
     } else {
         min = eq_size.value() * windowHeight;
         max = windowHeight * eq_height.value();
-        freq_cleaner = ((spectrum.length / 3) * 2);
+        // freq_cleaner = ((spectrum.length / 3) * 2);
+        freq_cleaner = bands;
 
         strokeWeight(bandstroke.value());
 
@@ -168,8 +171,19 @@ function draw() {
     }
 }
 
-function highestPowerof2(n) {
-    var p = round((Math.log(n) / Math.log(2)));
-
-    return round(Math.pow(2, p));
-}
+document.onkeydown = function(evt) {
+    evt = evt || window.event;
+    if (evt.keyCode == 27) {
+        // console.log("=============================================");
+        // console.log("fft.Analyse() -> ", fft.analyze());
+        console.log("=============================================");
+        console.log("Spectrum ------> ", spectrum);
+        console.log("=============================================");
+        console.log("_Spectrum -----> ", _spectrum);
+        console.log("=============================================");
+        console.log("fft.Analyse() Length -> ", fft.analyze().length);
+        console.log("Spectrum Length ------> ", spectrum.length);
+        console.log("_Spectrum Length -----> ", _spectrum.length);
+        console.log("=============================================");
+    }
+};
