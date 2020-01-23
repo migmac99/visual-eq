@@ -15,7 +15,7 @@
   "eq_height": "0.78",
   "eq_mirrored": "1",
   "eq_switched": "0",
-  "eq_normalize": "1",
+  "eq_bounce": "1",
   "eq_preset": "2",
-  "eq_cutoff": "0.98"
+  "eq_cutoff": "0.88"
 }

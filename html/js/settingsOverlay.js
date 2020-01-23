@@ -1,6 +1,6 @@
 let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize;
 let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b;
-let eq_size, eq_height, eq_mirrored, eq_switched, eq_normalize, eq_preset, eq_cutoff;
+let eq_size, eq_height, eq_mirrored, eq_switched, eq_bounce, eq_preset, eq_cutoff;
 
 let settingsEnabled = true;
 let hasRunMouse = false;
@@ -54,7 +54,7 @@ function settingsCreateSliders() {
     eq_height = createSlider(0, 1, 0, 0.01); //Vertical position of eq based on percentage of the screen
     eq_mirrored = createSlider(0, 1, 0, 1).class("toggle"); //Whether the eq is mirrored
     eq_switched = createSlider(0, 1, 0, 1).class("toggle"); //Switch frequency order
-    eq_normalize = createSlider(0, 1, 0, 1).class("toggle"); //Normalize audio data
+    eq_bounce = createSlider(0, 1, 0, 1).class("toggle"); //Normalize audio data
 
     eq_preset = createSlider(0, 5, 0, 1);
     eq_cutoff = createSlider(0.01, 1, 0.01, 0.01);
@@ -95,7 +95,7 @@ function settingsMoveToDivs() {
     eq_height.parent('eq');
     eq_mirrored.parent('eq');
     eq_switched.parent('eq');
-    eq_normalize.parent('eq');
+    eq_bounce.parent('eq');
 
     eq_preset.parent('eq');
     eq_cutoff.parent('eq');
@@ -121,7 +121,7 @@ function settingsLoad() {
     eq_height.value(settings.eq_height);
     eq_mirrored.value(settings.eq_mirrored);
     eq_switched.value(settings.eq_switched);
-    eq_normalize.value(settings.eq_normalize);
+    eq_bounce.value(settings.eq_bounce);
     eq_preset.value(settings.eq_preset);
     eq_cutoff.value(settings.eq_cutoff);
 }
@@ -142,7 +142,7 @@ function settingsRefreshOnInput() {
     eq_height.input(refresh);
     eq_mirrored.input(refresh);
     eq_switched.input(refresh);
-    eq_normalize.input(refresh);
+    eq_bounce.input(refresh);
     eq_preset.input(refresh);
     eq_cutoff.input(refresh);
 }
@@ -169,7 +169,7 @@ function settingsPosition() {
 
     eq_mirrored.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 7)));
     eq_switched.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 7)));
-    eq_normalize.position(((windowWidth / 2) - 20 + _setting_space / 2), (setting_start + (setting_space * 7)));
+    eq_bounce.position(((windowWidth / 2) - 20 + _setting_space / 2), (setting_start + (setting_space * 7)));
 
     eq_preset.position(((windowWidth / 2) - (eq_preset.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
     eq_cutoff.position(((windowWidth / 2) - (eq_cutoff.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
@@ -201,7 +201,7 @@ function settingsCreateLegend() {
 
     createElement('p', 'Mirror EQ').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 7)));
     createElement('p', 'Switch EQ').parent('eq').position(0, (_setting_start + (setting_space * 7)));
-    createElement('p', 'Normalize EQ').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
+    createElement('p', 'Bounce Image').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
 
     createElement('p', 'EQ Preset').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
     createElement('p', 'EQ Cutoff').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
@@ -229,7 +229,7 @@ function settingsSave(download = false) {
         eq_height: str(eq_height.value()),
         eq_mirrored: str(eq_mirrored.value()),
         eq_switched: str(eq_switched.value()),
-        eq_normalize: str(eq_normalize.value()),
+        eq_bounce: str(eq_bounce.value()),
         eq_preset: str(eq_preset.value()),
         eq_cutoff: str(eq_cutoff.value())
     };
@@ -274,7 +274,7 @@ function settingsUpload() {
             eq_height.value(content.eq_height);
             eq_mirrored.value(content.eq_mirrored);
             eq_switched.value(content.eq_switched);
-            eq_normalize.value(content.eq_normalize);
+            eq_bounce.value(content.eq_bounce);
             eq_preset.value(content.eq_preset);
             eq_cutoff.value(content.eq_cutoff);
 

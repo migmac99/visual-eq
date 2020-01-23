@@ -8,7 +8,7 @@ function runAlgorithms(array, preset) {
     } else if (preset == 2) {
         newArray = normalizeArray(newArray, multiplier);
         newArray = averageTransform(newArray);
-        newArray = tailTransform(newArray);
+        newArray = tailTransform(newArray, eq_cutoff.value(), eq_cutoff.value(), 0.7);
         newArray = savitskyGolaySmooth(newArray, 3, 1);
         newArray = exponentialTransform(newArray);
     } else if (preset == 3) {
@@ -24,11 +24,7 @@ function runAlgorithms(array, preset) {
 
 //Normalizes array, all values are between 0 - 1
 function normalizeArray(array, multiplier) {
-    if (eq_normalize.value() == 0) {
-        return (array);
-    } else {
-        return normalize(array).map(function(x) { return x * multiplier; });;
-    }
+    return normalize(array).map(function(x) { return x * multiplier; });;
 }
 
 function normalize(arr, dim, bounds) {

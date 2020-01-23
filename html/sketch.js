@@ -83,13 +83,12 @@ function draw() {
     document.getElementById("title").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Title Color
     document.getElementById("artist").style.color = color(eq_r.value(), eq_g.value(), eq_b.value()); //Artist Color
 
-    // multiplier = eq_normalize.value() * (windowHeight);
-    multiplier = eq_normalize.value() * (0.75 * windowHeight);
+    // multiplier = windowHeight;
+    multiplier = 0.75 * windowHeight;
 
     let ffta = fft.analyze();
 
-    _spectrum = ffta.slice(0, (eq_cutoff.value() * ffta.length));
-    spectrum = runAlgorithms(_spectrum, eq_preset.value());
+    spectrum = runAlgorithms(ffta, eq_preset.value());
 
     console.log(_spectrum.length, spectrum.length);
 
