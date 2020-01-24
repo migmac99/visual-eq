@@ -51,6 +51,11 @@ node -v
 
 ## Running a node server on startup
 
+Make sure you have git installed with `git -v`, if not then do:
+```
+sudo apt install git-all
+```
+
 Before we can run the Node server you will need to have the application installed on your Pi. Presuming you have your project on github already, you can get its https address and clone it into your Pi's home folder using the following command.
 ```
 https://github.com/migmac99/visual-eq.git
