@@ -259,6 +259,8 @@ function settingsUpload() {
         reader.onload = readerEvent => {
             let content = JSON.parse(readerEvent.target.result);
 
+            image_path = content.image_path;
+
             smooth.value(content.smooth);
             bandspace.value(content.bandspace);
             bandstroke.value(content.bandstroke);
