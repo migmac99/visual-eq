@@ -1,9 +1,9 @@
 {
-  "image_path": "logo.svg",
-  "smooth": "0.72",
-  "bandspace": "8",
+  "image_path": "svg/logo.svg",
+  "smooth": "0.86",
+  "bandspace": "5",
   "bandstroke": "2.4",
-  "bandstroke_mirrored": "0.1",
+  "bandstroke_mirrored": "0.3",
   "imagesize": "0.4",
   "bg_r": "0",
   "bg_g": "0",
@@ -11,11 +11,11 @@
   "eq_r": "255",
   "eq_g": "255",
   "eq_b": "255",
-  "eq_size": "0.66",
+  "eq_size": "0.68",
   "eq_height": "0.78",
   "eq_mirrored": "1",
-  "eq_switched": "1",
-  "eq_normalize": "1",
-  "filterFreq": "7177",
-  "filterRes": "36.403"
+  "eq_switched": "0",
+  "eq_bounce": "1",
+  "eq_preset": "2",
+  "eq_cutoff": "0.88"
 }
