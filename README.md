@@ -68,6 +68,9 @@ Next, change directory into that folder using the following commands to install 
 cd /home/pi/visual-eq
 ```
 ```
+sudo apt-get install npm
+```
+```
 npm install
 ```
 
