@@ -28,7 +28,6 @@ function setup() {
 
     //Save settings in local vars
     image_path = settings.image_path;
-    svgObject = document.getElementById('logo');
 
     settingsCreateSliders(); //Slider creation
     settingsCreateButtons(); //Button creation
@@ -52,10 +51,10 @@ function touchStarted() {
 }
 
 function refresh() {
-    document.getElementById("logo").setAttribute("data", image_path);
-
     //Change color and size of svg image
     svgObject = document.getElementById('logo');
+
+    svgObject.setAttribute("data", image_path);
 
     if (svgObject) {
         svgObject.addEventListener("load", function() {
@@ -190,8 +189,8 @@ function draw() {
 
 document.onkeydown = function(evt) {
     evt = evt || window.event;
-    if (evt.keyCode == 27) {
-        updateSVG();
+    if (evt.keyCode == 27) { //Escape key
+        // updateSVG();
         // console.log("=============================================");
         // console.log("fft.Analyse() -> ", fft.analyze());
         // console.log("=============================================");
