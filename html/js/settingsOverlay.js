@@ -131,7 +131,7 @@ function settingsRefreshOnInput() {
     bandspace.input(refresh);
     bandstroke.input(refresh);
     bandstroke_mirrored.input(refresh);
-    imagesize.input(refresh);
+    // imagesize.input(refresh);
     bg_r.input(refresh);
     bg_g.input(refresh);
     bg_b.input(refresh);

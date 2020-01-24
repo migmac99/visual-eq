@@ -1,5 +1,5 @@
-let mic, fft;
-let canvas, logo, svg, svgObject, settings, save_server, save_download, uploadSettings;
+let mic, fft, bassDetect;
+let canvas, logo, svg, settings, save_server, save_download, uploadSettings;
 
 let min, max, freq_cleaner;
 
@@ -7,6 +7,7 @@ let multiplier, bands;
 
 let _spectrum = [];
 let spectrum = [];
+let peakValue = 1;
 
 function preload() {
     frameRate(60);
@@ -17,6 +18,10 @@ function setup() {
     //Audio channel connection
     mic = new p5.AudioIn(); //Request user microphone
     mic.start(); //Start the stream of sound
+
+    //bassDetect = new p5.PeakDetect(40, 120, 0.05);
+    // bassDetect = new p5.PeakDetect(15, 25, 0.35, 15);
+    bassDetect = new p5.PeakDetect(10, 20, 0.35, 30);
 
     //Read image from specified file_path from settings.json
     logo = loadImage(settings.image_path);
@@ -49,15 +54,15 @@ function touchStarted() {
 function refresh() {
     document.getElementById("logo").setAttribute("data", image_path);
 
-    //Change color of svg image
+    //Change color and size of svg image
     svgObject = document.getElementById('logo');
 
     if (svgObject) {
         svgObject.addEventListener("load", function() {
             svg = svgObject.contentDocument;
             svg.getElementsByTagName('g')[0].style.fill = color(eq_r.value(), eq_g.value(), eq_b.value());
-            svg.getElementsByTagName('svg')[0].setAttribute("width", height * imagesize.value());
-            svg.getElementsByTagName('svg')[0].setAttribute("height", height * imagesize.value());
+            svg.getElementsByTagName('svg')[0].setAttribute("width", height * imagesize.value() * peakValue);
+            svg.getElementsByTagName('svg')[0].setAttribute("height", height * imagesize.value() * peakValue);
             // console.log(svg.getElementsByTagName('svg')[0].style.width, svg.getElementsByTagName('svg')[0].style.height);
         }, false);
     }
@@ -67,7 +72,6 @@ function refresh() {
 
     bands = (windowWidth / 2) / bandspace.value();
     // bands = (windowWidth / bandspace.value()) * (0.95 / 1);
-
 
     // fft = new p5.FFT(smooth.value(), highestPowerof2(bands));
     fft = new p5.FFT(smooth.value(), 8192);
@@ -88,9 +92,23 @@ function draw() {
 
     let ffta = fft.analyze();
 
+    //Image Bouncing
+    fft.analyze();
+    bassDetect.update(fft);
+
+    if (eq_bounce.value() == 1) {
+        if (bassDetect.isDetected) {
+            triggerBeat(true);
+        } else {
+            triggerBeat();
+        }
+    } else {
+        peakValue = 1;
+    }
+
     spectrum = runAlgorithms(ffta, eq_preset.value());
 
-    console.log(_spectrum.length, spectrum.length);
+    // console.log(_spectrum.length, spectrum.length);
 
     // spectrum = fft.analyze();
     // spectrum = runAlgorithms(fft.analyze(), eq_preset.value());
@@ -173,16 +191,17 @@ function draw() {
 document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.keyCode == 27) {
+        updateSVG();
         // console.log("=============================================");
         // console.log("fft.Analyse() -> ", fft.analyze());
-        console.log("=============================================");
-        console.log("Spectrum ------> ", spectrum);
-        console.log("=============================================");
-        console.log("_Spectrum -----> ", _spectrum);
-        console.log("=============================================");
-        console.log("fft.Analyse() Length -> ", fft.analyze().length);
-        console.log("Spectrum Length ------> ", spectrum.length);
-        console.log("_Spectrum Length -----> ", _spectrum.length);
-        console.log("=============================================");
+        // console.log("=============================================");
+        // console.log("Spectrum ------> ", spectrum);
+        // console.log("=============================================");
+        // console.log("_Spectrum -----> ", _spectrum);
+        // console.log("=============================================");
+        // console.log("fft.Analyse() Length -> ", fft.analyze().length);
+        // console.log("Spectrum Length ------> ", spectrum.length);
+        // console.log("_Spectrum Length -----> ", _spectrum.length);
+        // console.log("=============================================");
     }
 };
