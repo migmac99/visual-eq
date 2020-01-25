@@ -121,7 +121,7 @@ If still unable try installing lxde and doing the following command:
 sudo apt-get install lxde-core xserver-xorg xinit
 ```
 ```
-sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+sudo nano /etc/xdg/lxsession/LXDE/autostart
 ```
 
 ```
