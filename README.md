@@ -116,9 +116,12 @@ If this returns `home/pi/.config/lxsession/autostart does not exist` then try th
 ```
 sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 ```
-If still unable try installing lxde and then try the previous commands again:
+If still unable try installing lxde and doing the following command:
 ```
 sudo apt-get install lxde-core xserver-xorg xinit
+```
+```
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 ```
 
 ```
