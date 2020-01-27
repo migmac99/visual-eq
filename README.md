@@ -151,6 +151,10 @@ If this returns `home/pi/.config/lxsession/autostart does not exist` then try th
 ```
 sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 ```
+or
+```
+sudo nano /home/pi/.config/lxsession/LXDE/autostart
+```
 
 and add the following line to the bottom:
 ```
@@ -163,7 +167,7 @@ My final file consisted of this:
 @xset -dpms
 @xset s noblank
 @sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium-browser Default/Preferences
-@chromium-browser --noerrdialogs --kiosk http://localhost:8000 --incognito
+@chromium-browser --noerrdialogs --kiosk http://localhost:8000 --incognito --use-fake-ui-for-media-stream
 @unclutter -idle 0.1 -root
 ```
 
