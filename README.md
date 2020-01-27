@@ -83,11 +83,11 @@ Once your server is running, you can go ahead and create a server file. Create t
 ```
 sudo nano /etc/systemd/system/node-server.service
 ```
-Then add the following code replacing the path to `visual-eq` in the WorkingDirectory and ExecStart lines with the path to your Node application. The Exec start line in the example is the equivalent to running the command `node server.js` so you may need to change this to `ExecStart=/usr/bin/npm start` if you start your project with the `npm start` command.
+The Exec start line in the example is the equivalent to running the command `node server.js` so you may need to change this to `ExecStart=/usr/bin/npm start` if you start your project with the `npm start` command.
 ```
 [Service]
-WorkingDirectory=/home/pi/some_awesome_project
-ExecStart=/usr/local/bin/node --expose-gc /home/pi/some_awesome_project/server.js
+WorkingDirectory=/home/pi/visual-eq
+ExecStart=/usr/local/bin/node --expose-gc /home/pi/visual-eq/server.js
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
