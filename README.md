@@ -16,6 +16,11 @@ This project is a visual equalizer that runs on a nodejs server in a raspberry p
     - [List running apps](#list-running-apps)
     - [Monitor all apps](#monitor-all-apps)
     - [Startup script](#startup-script)
+  - [Mopidy](#mopidy)
+    - [Install Mopidy](#install-mopidy)
+    - [Mopidy-Spotify](#mopidy-spotify)
+    - [Mopidy-Mopify](#mopidy-mopify)
+    - [Starting the service](#starting-the-service)
   - [Other Issues](#other-issues)
     - [Temporary failure resolving...](#temporary-failure-resolving)
   
@@ -51,14 +56,9 @@ node -v
 
 ## Running a node server on startup
 
-Make sure you have git installed with `git -v`, if not then do:
-```
-sudo apt install git
-```
-
 Before we can run the Node server you will need to have the application installed on your Pi. Presuming you have your project on github already, you can get its https address and clone it into your Pi's home folder using the following command.
 ```
-git clone https://github.com/migmac99/visual-eq.git
+https://github.com/migmac99/visual-eq.git
 ```
 
 
@@ -68,9 +68,6 @@ Next, change directory into that folder using the following commands to install 
 cd /home/pi/visual-eq
 ```
 ```
-sudo apt-get install npm
-```
-```
 npm install
 ```
 
@@ -78,6 +75,33 @@ Now, make sure everything is working by starting up your Node server. Usually th
 ```
 node server
 ```
+
+Once your server is running, you can go ahead and create a server file. Create this in the systemd directory using the following command:
+```
+sudo nano /etc/systemd/system/node-server.service
+```
+Then add the following code replacing the path to `visual-eq` in the WorkingDirectory and ExecStart lines with the path to your Node application. The Exec start line in the example is the equivalent to running the command `node server.js` so you may need to change this to `ExecStart=/usr/bin/npm start` if you start your project with the `npm start` command.
+```
+[Service]
+WorkingDirectory=/home/pi/some_awesome_project
+ExecStart=/usr/local/bin/node --expose-gc /home/pi/some_awesome_project/server.js
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=nodeServer
+User=root
+Group=root
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+```
+Exit nano with `ctrl + x` and press `Y` to save the file. You can then activate the system file with the following command:
+```
+sudo systemctl enable node-server
+```
+
+To check that it worked, reboot your Pi using `sudo reboot` and once it has loaded back up, use the browser navigate to the port that your server usually runs on, eg: `http://localhost:8000` and you should see your Node application running.
 
 ## Booting Chromium into kiosk mode on start up
 
@@ -89,12 +113,8 @@ If this returns `home/pi/.config/lxsession/autostart does not exist` then try th
 ```
 sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
 ```
-If still unable try installing lxde and doing the following command:
+
 ```
-sudo apt-get install lxde-core xserver-xorg xinit
-```
-```
-sudo nano /etc/xdg/lxsession/LXDE/autostart
 ```
 
 The first 3 lines prevent screen blanking - for one project I am using a touch screen so these could be removed to preserve life and make it wake on touch.
@@ -203,6 +223,104 @@ To execute the Startup Script, copy/paste the given command (after doing `pm2 st
 And to freeze a process list for automatic respawn:
 ```
 pm2 save
+```
+
+## Mopidy
+Mopidy is an extensible music server written in Python.
+
+
+### Install Mopidy
+
+To install mopidy do this:
+
+Add the gpg key of the archive
+```
+wget -q -O - https://apt.mopidy.com/mopidy.gpg | sudo apt-key add -
+```
+Add the repository to your package sources
+```
+sudo wget -q -O /etc/apt/sources.list.d/mopidy.list https://apt.mopidy.com/jessie.list
+```
+Update your package sources
+```
+sudo apt-get update
+```
+Install mopidy
+```
+sudo apt-get install mopidy
+```
+
+Add this to the end of `mopidy.conf` by doing
+```
+sudo nano /etc/mopidy/mopidy.conf
+```
+```
+[http]
+enabled = true
+hostname = 0.0.0.0
+port = 6680
+```
+
+### Mopidy-Spotify
+
+```
+sudo apt-get install mopidy-spotify
+```
+
+Add this to the end of `mopidy.conf` by doing
+```
+sudo nano /etc/mopidy/mopidy.conf
+```
+```
+[spotify]
+enabled = true
+username = <your spotify username>
+password = <your spotify password>
+client_id = <your client id>
+client_secret = <your client secret>
+```
+
+To check your client_id and cient_secret, go [here](https://mopidy.com/ext/spotify/#authentication)
+
+### Mopidy-Mopify
+
+we need pip (python package manager) for this
+```
+sudo apt-get install python-pip
+```
+After the pip installation do:
+```
+sudo pip install Mopidy-Mopify
+```
+Add this to the end of `mopidy.conf` by doing
+```
+sudo nano /etc/mopidy/mopidy.conf
+```
+```
+[mopify]
+enabled = true
+debug = false
+```
+
+### Starting the service
+
+Reload the services by doing
+```
+sudo systemctl daemon-reload
+```
+Enable mopify
+```
+sudo systemctl enable mopidy
+```
+Start the service
+```
+sudo systemctl start mopidy
+```
+After this do `sudo reboot` to reboot your system to check that mopidy starts automatically when booted.
+
+Once booted, to check service status do:
+```
+sudo systemctl status mopidy
 ```
 
 
