@@ -79,33 +79,6 @@ Now, make sure everything is working by starting up your Node server. Usually th
 node server
 ```
 
-Once your server is running, you can go ahead and create a server file. Create this in the systemd directory using the following command:
-```
-sudo nano /etc/systemd/system/node-server.service
-```
-The Exec start line in the example is the equivalent to running the command `node server.js` so you may need to change this to `ExecStart=/usr/bin/npm start` if you start your project with the `npm start` command.
-```
-[Service]
-WorkingDirectory=/home/pi/visual-eq
-ExecStart=/usr/local/bin/node --expose-gc /home/pi/visual-eq/server.js
-Restart=always
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=nodeServer
-User=root
-Group=root
-Environment=NODE_ENV=production
-
-[Install]
-WantedBy=multi-user.target
-```
-Exit nano with `ctrl + x` and press `Y` to save the file. You can then activate the system file with the following command:
-```
-sudo systemctl enable node-server
-```
-
-To check that it worked, reboot your Pi using `sudo reboot` and once it has loaded back up, use the browser navigate to the port that your server usually runs on, eg: `http://localhost:8000` and you should see your Node application running.
-
 ## Booting Chromium into kiosk mode on start up
 
 The last step in the process is to boot the chromium-browser into kiosk mode to show your Node application full screen. To do this you need to add one line of code to the autostart file. To edit your autostart file, use the following command:
@@ -122,9 +95,6 @@ sudo apt-get install lxde-core xserver-xorg xinit
 ```
 ```
 sudo nano /etc/xdg/lxsession/LXDE/autostart
-```
-
-```
 ```
 
 The first 3 lines prevent screen blanking - for one project I am using a touch screen so these could be removed to preserve life and make it wake on touch.
