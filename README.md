@@ -345,3 +345,20 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4
 ```
 > (Google DNS)
+
+If the issue persists because the file `resolv.conf` gets overriten on boot try this:
+
+Install dnsmasq
+```
+sudo apt-get install dnsmasq
+sudo nano /etc/dnsmasq.conf
+```
+Add the following to `dnsmasq.conf`
+```
+server=8.8.8.8
+server=8.8.4.4
+```
+```
+sudo service dnsmasq restart
+sudo service network-manager restart
+```
