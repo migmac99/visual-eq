@@ -21,6 +21,6 @@
     "np_enabled": "1",
     "np_link": "https://nowplaying.aidenwallis.co.uk/5e3207f18bdd560a8e9d515d",
     "np_use_link": "1",
-    "np_x": "0",
-    "np_y": "0"
+    "np_x": "0.05",
+    "np_y": "0.05"
 }

@@ -194,10 +194,9 @@ function settingsRefreshOnInput() {
     eq_preset.input(refresh);
     eq_cutoff.input(refresh);
     np_enabled.input(refresh);
-    // np_link.input(refresh);
     np_use_link.input(refresh);
-    np_x.input(refresh);
-    np_y.input(refresh);
+    np_x.input(NowPlaying_Move);
+    np_y.input(NowPlaying_Move);
 }
 
 function settingsPosition() {
@@ -405,6 +404,52 @@ function settingsUpload() {
 
 function NowPlaying_PromptLink() {
     np_link = prompt("Paste the widget link here! \n \nIf you don't have one, create it from here: \nhttps://spotify.aidenwallis.co.uk/", "https://nowplaying.aidenwallis.co.uk/5e3207f18bdd560a8e9d515d");
+    if (np_link == null) {
+        np_link = settings.np_link;
+    }
+    refresh();
+}
+
+function NowPlaying_Move() {
+    //Position songInfo
+    document.getElementById("songInfo").style.left = (windowWidth * np_x.value()) + "px";
+    document.getElementById("songInfo").style.bottom = (windowHeight * np_y.value()) + "px";
+
+    //Position title
+    document.getElementById("title").style.left = (windowWidth * np_x.value()) + "px";
+    document.getElementById("title").style.bottom = (windowHeight * np_y.value() + 20) + "px";
+
+    //Position artist
+    document.getElementById("artist").style.left = (windowWidth * np_x.value()) + "px";
+    document.getElementById("artist").style.bottom = (windowHeight * np_y.value()) + "px";
+}
+
+function settingsNowPlaying() {
+    if (np_enabled.value() == 1) {
+        if (np_use_link.value() == 1) {
+            //Enable songInfo
+            document.getElementById("songInfo").style.display = "block";
+            document.getElementById("songInfo").src = np_link;
+
+            //Disable title and artist
+            document.getElementById("title").style.display = "none";
+            document.getElementById("artist").style.display = "none";
+        } else {
+            //Disable songInfo
+            document.getElementById("songInfo").style.display = "none";
+
+            //Enable title and artist
+            document.getElementById("title").style.display = "block";
+            document.getElementById("artist").style.display = "block";
+        }
+    } else {
+        //Disable songInfo
+        document.getElementById("songInfo").style.display = "none";
+
+        //Disable title and artist
+        document.getElementById("title").style.display = "none";
+        document.getElementById("artist").style.display = "none";
+    }
 }
 
 // currentSong = https://spotify.aidenwallis.co.uk/u/5e3207f18bdd560a8e9d515d

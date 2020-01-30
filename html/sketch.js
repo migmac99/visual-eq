@@ -37,6 +37,8 @@ function setup() {
     settingsCreateLegend(); //Creates legends for each setting
     settingsToggle(); //Toggles settings overlay
 
+    settingsNowPlaying();
+
     refresh();
 
     // baseURL = window.localStorage.href;
@@ -79,6 +81,8 @@ function refresh() {
     fft.setInput(mic); //Sets the mic as the fft input
 
     settingsPosition(); //Settings positioning
+
+    settingsNowPlaying(); //Now Playing settings
 }
 
 function draw() {
