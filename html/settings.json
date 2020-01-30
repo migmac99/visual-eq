@@ -17,5 +17,10 @@
   "eq_switched": "0",
   "eq_bounce": "1",
   "eq_preset": "2",
-  "eq_cutoff": "0.88"
+  "eq_cutoff": "0.88",
+  "np_enabled": "1",
+  "np_link": "https://nowplaying.aidenwallis.co.uk/5e3207f18bdd560a8e9d515d",
+  "np_use_link": "1",
+  "np_x": "0",
+  "np_y": "0"
 }

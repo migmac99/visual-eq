@@ -1,8 +1,10 @@
-let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize;
-let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b;
-let eq_size, eq_height, eq_mirrored, eq_switched, eq_bounce, eq_preset, eq_cutoff;
+let smooth, bandspace, bandstroke, bandstroke_mirrored; //Bands
+let image_path, imagesize; // Image
+let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b; // Colors
+let eq_size, eq_height, eq_mirrored, eq_switched, eq_bounce, eq_preset, eq_cutoff; //EQ Stuff
+let np_enabled, np_link, np_use_link, np_x, np_y; // Now Playing
 
-let save_server, save_download, uploadSettings, linkSpotify;
+let save_server, save_download, uploadSettings, linkNowPlaying; //Buttons
 
 let settingsEnabled = true;
 let hasRunMouse = false;
@@ -58,8 +60,13 @@ function settingsCreateSliders() {
     eq_switched = createSlider(0, 1, 0, 1).class("toggle"); //Switch frequency order
     eq_bounce = createSlider(0, 1, 0, 1).class("toggle"); //Normalize audio data
 
-    eq_preset = createSlider(0, 5, 0, 1);
-    eq_cutoff = createSlider(0.01, 1, 0.01, 0.01);
+    eq_preset = createSlider(0, 5, 0, 1); //Testing presets
+    eq_cutoff = createSlider(0.01, 1, 0.01, 0.01); //Cutoff of audio spectrum
+
+    np_enabled = createSlider(0, 1, 0, 1).class("toggle"); //Whether NowPlaying is active
+    np_use_link = createSlider(0, 1, 0, 1).class("toggle"); //Whether to use link for iframe or not
+    np_x = createSlider(0, 1, 0, 0.01); //Horizontal position of NowPlaying based on percentage of the screen
+    np_y = createSlider(0, 1, 0, 0.01); //Vertical position of NowPlaying based on percentage of the screen
 }
 
 function settingsCreateButtons() {
@@ -75,9 +82,9 @@ function settingsCreateButtons() {
     uploadSettings.class('button');
     uploadSettings.mousePressed(settingsUpload);
 
-    linkSpotify = createButton(' Link Spotify ');
-    linkSpotify.class('button');
-    linkSpotify.mousePressed(connectSpotify);
+    linkNowPlaying = createButton(' Set Widget Link ');
+    linkNowPlaying.class('button');
+    linkNowPlaying.mousePressed(NowPlaying_PromptLink);
 }
 
 function settingsMoveToDivs() {
@@ -122,12 +129,22 @@ function settingsMoveToDivs() {
     //////////////////////////////////////////////
 
 
+    //NowPlaying//////////////////////////////////
+    np_enabled.parent('NowPlaying');
+    //
+    np_x.parent('NowPlaying');
+    np_y.parent('NowPlaying');
+    //
+    //np_link.parent('NowPlaying');
+    np_use_link.parent('NowPlaying');
+    linkNowPlaying.parent('NowPlaying');
+    //////////////////////////////////////////////
+
+
     //Other///////////////////////////////////////
     save_server.parent('settings');
     save_download.parent('settings');
     uploadSettings.parent('settings');
-    //
-    linkSpotify.parent('settings');
     //////////////////////////////////////////////
 }
 
@@ -150,6 +167,11 @@ function settingsLoad() {
     eq_bounce.value(settings.eq_bounce);
     eq_preset.value(settings.eq_preset);
     eq_cutoff.value(settings.eq_cutoff);
+    np_enabled.value(settings.np_enabled);
+    np_link = settings.np_link;
+    np_use_link.value(settings.np_use_link);
+    np_x.value(settings.np_x);
+    np_y.value(settings.np_y);
 }
 
 function settingsRefreshOnInput() {
@@ -171,6 +193,11 @@ function settingsRefreshOnInput() {
     eq_bounce.input(refresh);
     eq_preset.input(refresh);
     eq_cutoff.input(refresh);
+    np_enabled.input(refresh);
+    // np_link.input(refresh);
+    np_use_link.input(refresh);
+    np_x.input(refresh);
+    np_y.input(refresh);
 }
 
 function settingsPosition() {
@@ -215,12 +242,21 @@ function settingsPosition() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    //Other///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start - (setting_space * 1));
-    save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start - (setting_space * 1));
-    uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start - (setting_space * 1));
+    //NowPlaying//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    np_enabled.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 2)));
     //
-    linkSpotify.position((windowWidth / 2) - (linkSpotify.width / 2), windowHeight - setting_start);
+    np_x.position(((windowWidth / 2) - (np_x.width / 2) - _setting_space / 2), (setting_start + (setting_space * 3)));
+    np_y.position(((windowWidth / 2) - (np_y.width / 2) + _setting_space / 2), (setting_start + (setting_space * 3)));
+    //
+    np_use_link.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 4)));
+    linkNowPlaying.position((windowWidth / 2) - (linkNowPlaying.width / 2) + _setting_space / 2, (setting_start - 5 + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //Other///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start);
+    save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start);
+    uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -228,17 +264,17 @@ function settingsCreateLegend() {
 
     //EQ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     createElement('p', 'Smoothing').parent('EQ').position(-_setting_space / 2, (_setting_start + (setting_space * 2)));
-    createElement('p', 'EQ Cutoff').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 2)));
+    createElement('p', 'Freq Cutoff').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 2)));
     //
-    createElement('p', 'EQ size (screen %)').parent('EQ').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
-    createElement('p', 'EQ vertical position (screen %)').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
+    createElement('p', 'Size (screen %)').parent('EQ').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
+    createElement('p', 'Vertical position (%)').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
     //
-    createElement('p', 'EQ Preset').parent('EQ').position(0, (_setting_start + (setting_space * 4)));
+    createElement('p', 'Preset').parent('EQ').position(0, (_setting_start + (setting_space * 4)));
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     //Bands///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    createElement('p', 'Switch EQ').parent('Bands').position(0, (_setting_start + (setting_space * 2)));
+    createElement('p', 'Switch Freq').parent('Bands').position(0, (_setting_start + (setting_space * 2)));
     //
     createElement('p', 'Space between bands').parent('Bands').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
     createElement('p', 'Band StrokeWeight').parent('Bands').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
@@ -266,32 +302,15 @@ function settingsCreateLegend() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    //NowPlaying//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    createElement('p', 'Enable NowPlaying').parent('NowPlaying').position(0, (_setting_start + (setting_space * 2)));
+    //
+    createElement('p', 'Horiontal Position (%)').parent('NowPlaying').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
+    createElement('p', 'Vertical Position (%)').parent('NowPlaying').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
+    //
+    createElement('p', 'Use Link').parent('NowPlaying').position(-_setting_space / 2, (_setting_start + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // createElement('p', 'Smoothing').parent('smooth').position(0, (_setting_start + (setting_space * 1)));
-
-    // createElement('p', 'Space between bands').parent('bands').position(-_setting_space, (_setting_start + (setting_space * 2)));
-    // createElement('p', 'Band StrokeWeight').parent('bands').position(0, (_setting_start + (setting_space * 2)));
-    // createElement('p', 'Mirrored band StrokeWeight').parent('bands').position(_setting_space, (_setting_start + (setting_space * 2)));
-
-    // createElement('p', 'Image Size').parent('imagesize').position(0, (_setting_start + (setting_space * 3)));
-
-    // createElement('p', 'Background Red').parent('image_color').position(-_setting_space, (_setting_start + (setting_space * 4)));
-    // createElement('p', 'Background Green').parent('image_color').position(0, (_setting_start + (setting_space * 4)));
-    // createElement('p', 'Background Blue').parent('image_color').position(_setting_space, (_setting_start + (setting_space * 4)));
-
-    // createElement('p', 'EQ Red').parent('eq_color').position(-_setting_space, (_setting_start + (setting_space * 5)));
-    // createElement('p', 'EQ Green').parent('eq_color').position(0, (_setting_start + (setting_space * 5)));
-    // createElement('p', 'EQ Blue').parent('eq_color').position(_setting_space, (_setting_start + (setting_space * 5)));
-
-    // createElement('p', 'EQ size (screen %)').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 6)));
-    // createElement('p', 'EQ vertical position (screen %)').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 6)));
-
-    // createElement('p', 'Mirror EQ').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 7)));
-    // createElement('p', 'Switch EQ').parent('eq').position(0, (_setting_start + (setting_space * 7)));
-    // createElement('p', 'Bounce Image').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
-
-    // createElement('p', 'EQ Preset').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
-    // createElement('p', 'EQ Cutoff').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
 
 function settingsDownload() {
@@ -318,7 +337,12 @@ function settingsSave(download = false) {
         eq_switched: str(eq_switched.value()),
         eq_bounce: str(eq_bounce.value()),
         eq_preset: str(eq_preset.value()),
-        eq_cutoff: str(eq_cutoff.value())
+        eq_cutoff: str(eq_cutoff.value()),
+        np_enabled: str(np_enabled.value()),
+        np_link: np_link,
+        np_use_link: str(np_use_link.value()),
+        np_x: str(np_x.value()),
+        np_y: str(np_y.value())
     };
 
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
@@ -367,13 +391,20 @@ function settingsUpload() {
             eq_preset.value(content.eq_preset);
             eq_cutoff.value(content.eq_cutoff);
 
+            np_enabled.value(content.np_enabled);
+            np_link = np_link;
+            np_use_link.value(content.np_use_link);
+            np_x.value(content.np_x);
+            np_y.value(content.np_y);
+
             refresh();
         }
     }
     input.click();
 }
 
-function connectSpotify() {
-    // console.log('SOPAS');
-    // currentSong = https://spotify.aidenwallis.co.uk/u/5e3207f18bdd560a8e9d515d
+function NowPlaying_PromptLink() {
+    np_link = prompt("Paste the widget link here! \n \nIf you don't have one, create it from here: \nhttps://spotify.aidenwallis.co.uk/", "https://nowplaying.aidenwallis.co.uk/5e3207f18bdd560a8e9d515d");
 }
+
+// currentSong = https://spotify.aidenwallis.co.uk/u/5e3207f18bdd560a8e9d515d
