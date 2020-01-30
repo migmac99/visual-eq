@@ -31,10 +31,8 @@
         <object id="logo" class="logo" type="image/svg+xml"></object>
         <div id="title" class="title">Title</div>
         <div id="artist" class="artist">Artist</div>
-        <iframe id="songInfo" width="350px" height="70" class="songInfo" frameborder="0" style="color: rgb(255, 255, 255);"></iframe>
+        <iframe id="songInfo" width="350px" height="70" class="songInfo" frameborder="0"></iframe>
     </div>
-
-
 
     <div id="settings">
         <div class="setting">
@@ -55,27 +53,9 @@
         <div id="Image" class="tabcontent setting"></div>
         <div id="Colors" class="tabcontent setting"></div>
         <div id="NowPlaying" class="tabcontent setting"></div>
-
-        <!-- <input id="file-input" type="file" name="settings.json" style="display: none;" /> -->
     </div>
 
-    <script>
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
-
-        document.getElementById("defaultOpen").click();
-    </script>
+    <script src="js/tabScript.js"></script>
 </body>
 
 </html>
