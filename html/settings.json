@@ -1,6 +1,6 @@
 {
   "image_path": "svg/logo.svg",
-  "smooth": "0.86",
+  "smooth": "0",
   "bandspace": "5",
   "bandstroke": "2.4",
   "bandstroke_mirrored": "0.3",

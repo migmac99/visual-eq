@@ -20,6 +20,7 @@
 
     <script src="js/algorithms.js"></script>
     <script src="js/updateImage.js"></script>
+
     <script src="js/settingsOverlay.js"></script>
 
     <script src="sketch.js"></script>
@@ -28,25 +29,52 @@
 <body oncontextmenu="return false;" scroll="no">
     <div class="wrapper" style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" unselectable="on" onselectstart="return false;" onmousedown="return false;">
         <object id="logo" class="logo" type="image/svg+xml"></object>
-        <div id="title" class="title">Song Name</div>
+        <div id="title" class="title">Title</div>
         <div id="artist" class="artist">Artist</div>
+        <iframe id="songInfo" width="350px" height="70" class="songInfo" frameborder="0" src="https://nowplaying.aidenwallis.co.uk/5e3207f18bdd560a8e9d515d" style="color: rgb(255, 255, 255);"></iframe>
         <!-- <div id="volume"></div> -->
     </div>
+
+
+
     <div id="settings">
         <div class="setting">
             <p style="font-size: 20px; font-weight: 500;">Right-click to toggle the Settings menu</p>
             <p>If the page is refreshed without saving all changed settings <strong>will be lost!</strong></p>
         </div>
-        <div id="smooth" class="setting"></div>
-        <div id="bands" class="setting"></div>
-        <div id="imagesize" class="setting"></div>
-        <div id="image_color" class="setting"></div>
-        <div id="eq_color" class="setting"></div>
-        <div id="eq" class="setting"></div>
-        <div id="filter" class="setting"></div>
+
+        <div class="tab">
+            <button id="defaultOpen" class="tablinks" onclick="openTab(event, 'EQ')">EQ</button>
+            <button class="tablinks" onclick="openTab(event, 'Bands')">Bands</button>
+            <button class="tablinks" onclick="openTab(event, 'Image')">Image</button>
+            <button class="tablinks" onclick="openTab(event, 'Colors')">Colors</button>
+        </div>
+
+        <div id="EQ" class="tabcontent setting"></div>
+        <div id="Bands" class="tabcontent setting"></div>
+        <div id="Image" class="tabcontent setting"></div>
+        <div id="Colors" class="tabcontent setting"></div>
 
         <!-- <input id="file-input" type="file" name="settings.json" style="display: none;" /> -->
     </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById("defaultOpen").click();
+    </script>
 </body>
 
 </html>

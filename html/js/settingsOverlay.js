@@ -2,6 +2,8 @@ let smooth, bandspace, bandstroke, bandstroke_mirrored, image_path, imagesize;
 let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b;
 let eq_size, eq_height, eq_mirrored, eq_switched, eq_bounce, eq_preset, eq_cutoff;
 
+let save_server, save_download, uploadSettings, linkSpotify;
+
 let settingsEnabled = true;
 let hasRunMouse = false;
 
@@ -72,37 +74,61 @@ function settingsCreateButtons() {
     uploadSettings = createButton(' Upload Settings ');
     uploadSettings.class('button');
     uploadSettings.mousePressed(settingsUpload);
+
+    linkSpotify = createButton(' Link Spotify ');
+    linkSpotify.class('button');
+    linkSpotify.mousePressed(connectSpotify);
 }
 
 function settingsMoveToDivs() {
-    smooth.parent('smooth');
 
-    bandspace.parent('bands');
-    bandstroke.parent('bands');
-    bandstroke_mirrored.parent('bands');
+    //EQ//////////////////////////////////////////
+    smooth.parent('EQ');
+    eq_cutoff.parent('EQ');
+    //
+    eq_size.parent('EQ');
+    eq_height.parent('EQ');
+    //
+    eq_preset.parent('EQ');
+    //////////////////////////////////////////////
 
-    imagesize.parent('imagesize');
 
-    bg_r.parent('image_color');
-    bg_g.parent('image_color');
-    bg_b.parent('image_color');
+    //Bands///////////////////////////////////////
+    eq_switched.parent('Bands');
+    //
+    bandspace.parent('Bands');
+    bandstroke.parent('Bands');
+    //
+    eq_mirrored.parent('Bands');
+    bandstroke_mirrored.parent('Bands');
+    //////////////////////////////////////////////
 
-    eq_r.parent('eq_color');
-    eq_g.parent('eq_color');
-    eq_b.parent('eq_color');
 
-    eq_size.parent('eq');
-    eq_height.parent('eq');
-    eq_mirrored.parent('eq');
-    eq_switched.parent('eq');
-    eq_bounce.parent('eq');
+    //Image///////////////////////////////////////
+    eq_bounce.parent('Image');
+    //
+    imagesize.parent('Image');
+    //////////////////////////////////////////////
 
-    eq_preset.parent('eq');
-    eq_cutoff.parent('eq');
 
+    //Colors//////////////////////////////////////
+    bg_r.parent('Colors');
+    bg_g.parent('Colors');
+    bg_b.parent('Colors');
+    //
+    eq_r.parent('Colors');
+    eq_g.parent('Colors');
+    eq_b.parent('Colors');
+    //////////////////////////////////////////////
+
+
+    //Other///////////////////////////////////////
     save_server.parent('settings');
     save_download.parent('settings');
     uploadSettings.parent('settings');
+    //
+    linkSpotify.parent('settings');
+    //////////////////////////////////////////////
 }
 
 function settingsLoad() {
@@ -148,63 +174,124 @@ function settingsRefreshOnInput() {
 }
 
 function settingsPosition() {
-    smooth.position(((windowWidth / 2) - (smooth.width / 2)), (setting_start + (setting_space * 1)));
 
-    bandspace.position(((windowWidth / 2) - (bandspace.width / 2) - _setting_space), (setting_start + (setting_space * 2)));
-    bandstroke.position(((windowWidth / 2) - (bandstroke.width / 2)), (setting_start + (setting_space * 2)));
-    bandstroke_mirrored.position(((windowWidth / 2) - (bandstroke_mirrored.width / 2) + _setting_space), (setting_start + (setting_space * 2)));
+    //EQ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    smooth.position(((windowWidth / 2) - (smooth.width / 2) - _setting_space / 2), (setting_start + (setting_space * 2)));
+    eq_cutoff.position(((windowWidth / 2) - (eq_cutoff.width / 2) + _setting_space / 2), (setting_start + (setting_space * 2)));
+    //
+    eq_size.position(((windowWidth / 2) - (eq_size.width / 2) - _setting_space / 2), (setting_start + (setting_space * 3)));
+    eq_height.position(((windowWidth / 2) - (eq_height.width / 2) + _setting_space / 2), (setting_start + (setting_space * 3)));
+    //
+    eq_preset.position(((windowWidth / 2) - (eq_preset.width / 2)), (setting_start + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    //Bands///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    eq_switched.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 2)));
+    //
+    bandspace.position(((windowWidth / 2) - (bandspace.width / 2) - _setting_space / 2), (setting_start + (setting_space * 3)));
+    bandstroke.position(((windowWidth / 2) - (bandstroke.width / 2) + _setting_space / 2), (setting_start + (setting_space * 3)));
+    //
+    eq_mirrored.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 4)));
+    bandstroke_mirrored.position(((windowWidth / 2) - (bandstroke_mirrored.width / 2) + _setting_space / 2), (setting_start + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //Image///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    eq_bounce.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 2)));
+    //
     imagesize.position(((windowWidth / 2) - (imagesize.width / 2)), (setting_start + (setting_space * 3)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    bg_r.position(((windowWidth / 2) - (bg_r.width / 2) - _setting_space), (setting_start + (setting_space * 4)));
-    bg_g.position(((windowWidth / 2) - (bg_g.width / 2)), (setting_start + (setting_space * 4)));
-    bg_b.position(((windowWidth / 2) - (bg_b.width / 2) + _setting_space), (setting_start + (setting_space * 4)));
 
-    eq_r.position(((windowWidth / 2) - (eq_r.width / 2) - _setting_space), (setting_start + (setting_space * 5)));
-    eq_g.position(((windowWidth / 2) - (eq_g.width / 2)), (setting_start + (setting_space * 5)));
-    eq_b.position(((windowWidth / 2) - (eq_b.width / 2) + _setting_space), (setting_start + (setting_space * 5)));
+    //Colors//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bg_r.position(((windowWidth / 2) - (bg_r.width / 2) - _setting_space), (setting_start + (setting_space * 2)));
+    bg_g.position(((windowWidth / 2) - (bg_g.width / 2)), (setting_start + (setting_space * 2)));
+    bg_b.position(((windowWidth / 2) - (bg_b.width / 2) + _setting_space), (setting_start + (setting_space * 2)));
+    //
+    eq_r.position(((windowWidth / 2) - (eq_r.width / 2) - _setting_space), (setting_start + (setting_space * 3)));
+    eq_g.position(((windowWidth / 2) - (eq_g.width / 2)), (setting_start + (setting_space * 3)));
+    eq_b.position(((windowWidth / 2) - (eq_b.width / 2) + _setting_space), (setting_start + (setting_space * 3)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    eq_size.position(((windowWidth / 2) - (eq_size.width / 2) - _setting_space / 2), (setting_start + (setting_space * 6)));
-    eq_height.position(((windowWidth / 2) - (eq_height.width / 2) + _setting_space / 2), (setting_start + (setting_space * 6)));
 
-    eq_mirrored.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 7)));
-    eq_switched.position(((windowWidth / 2) - 20), (setting_start + (setting_space * 7)));
-    eq_bounce.position(((windowWidth / 2) - 20 + _setting_space / 2), (setting_start + (setting_space * 7)));
-
-    eq_preset.position(((windowWidth / 2) - (eq_preset.width / 2) - _setting_space / 2), (setting_start + (setting_space * 8)));
-    eq_cutoff.position(((windowWidth / 2) - (eq_cutoff.width / 2) + _setting_space / 2), (setting_start + (setting_space * 8)));
-
-    save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start);
-    save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start);
-    uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start);
+    //Other///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    save_server.position(((windowWidth / 2) - (save_server.width / 2) - _setting_space), windowHeight - setting_start - (setting_space * 1));
+    save_download.position(((windowWidth / 2) - (save_download.width / 2)), windowHeight - setting_start - (setting_space * 1));
+    uploadSettings.position(((windowWidth / 2) - (save_server.width / 2) + _setting_space), windowHeight - setting_start - (setting_space * 1));
+    //
+    linkSpotify.position((windowWidth / 2) - (linkSpotify.width / 2), windowHeight - setting_start);
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 function settingsCreateLegend() {
-    createElement('p', 'Smoothing').parent('smooth').position(0, (_setting_start + (setting_space * 1)));
 
-    createElement('p', 'Space between bands').parent('bands').position(-_setting_space, (_setting_start + (setting_space * 2)));
-    createElement('p', 'Band StrokeWeight').parent('bands').position(0, (_setting_start + (setting_space * 2)));
-    createElement('p', 'Mirrored band StrokeWeight').parent('bands').position(_setting_space, (_setting_start + (setting_space * 2)));
+    //EQ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    createElement('p', 'Smoothing').parent('EQ').position(-_setting_space / 2, (_setting_start + (setting_space * 2)));
+    createElement('p', 'EQ Cutoff').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 2)));
+    //
+    createElement('p', 'EQ size (screen %)').parent('EQ').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
+    createElement('p', 'EQ vertical position (screen %)').parent('EQ').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
+    //
+    createElement('p', 'EQ Preset').parent('EQ').position(0, (_setting_start + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    createElement('p', 'Image Size').parent('imagesize').position(0, (_setting_start + (setting_space * 3)));
 
-    createElement('p', 'Background Red').parent('image_color').position(-_setting_space, (_setting_start + (setting_space * 4)));
-    createElement('p', 'Background Green').parent('image_color').position(0, (_setting_start + (setting_space * 4)));
-    createElement('p', 'Background Blue').parent('image_color').position(_setting_space, (_setting_start + (setting_space * 4)));
+    //Bands///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    createElement('p', 'Switch EQ').parent('Bands').position(0, (_setting_start + (setting_space * 2)));
+    //
+    createElement('p', 'Space between bands').parent('Bands').position(-_setting_space / 2, (_setting_start + (setting_space * 3)));
+    createElement('p', 'Band StrokeWeight').parent('Bands').position(_setting_space / 2, (_setting_start + (setting_space * 3)));
+    //
+    createElement('p', 'Mirror EQ').parent('Bands').position(-_setting_space / 2, (_setting_start + (setting_space * 4)));
+    createElement('p', 'Mirrored band StrokeWeight').parent('Bands').position(_setting_space / 2, (_setting_start + (setting_space * 4)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    createElement('p', 'EQ Red').parent('eq_color').position(-_setting_space, (_setting_start + (setting_space * 5)));
-    createElement('p', 'EQ Green').parent('eq_color').position(0, (_setting_start + (setting_space * 5)));
-    createElement('p', 'EQ Blue').parent('eq_color').position(_setting_space, (_setting_start + (setting_space * 5)));
 
-    createElement('p', 'EQ size (screen %)').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 6)));
-    createElement('p', 'EQ vertical position (screen %)').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 6)));
+    //Image///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    createElement('p', 'Bounce Image').parent('Image').position(0, (_setting_start + (setting_space * 2)));
+    //
+    createElement('p', 'Image Size').parent('Image').position(0, (_setting_start + (setting_space * 3)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    createElement('p', 'Mirror EQ').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 7)));
-    createElement('p', 'Switch EQ').parent('eq').position(0, (_setting_start + (setting_space * 7)));
-    createElement('p', 'Bounce Image').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
 
-    createElement('p', 'EQ Preset').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
-    createElement('p', 'EQ Cutoff').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
+    //Colors//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    createElement('p', 'Background Red').parent('Colors').position(-_setting_space, (_setting_start + (setting_space * 2)));
+    createElement('p', 'Background Green').parent('Colors').position(0, (_setting_start + (setting_space * 2)));
+    createElement('p', 'Background Blue').parent('Colors').position(_setting_space, (_setting_start + (setting_space * 2)));
+    //
+    createElement('p', 'EQ Red').parent('Colors').position(-_setting_space, (_setting_start + (setting_space * 3)));
+    createElement('p', 'EQ Green').parent('Colors').position(0, (_setting_start + (setting_space * 3)));
+    createElement('p', 'EQ Blue').parent('Colors').position(_setting_space, (_setting_start + (setting_space * 3)));
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    // createElement('p', 'Smoothing').parent('smooth').position(0, (_setting_start + (setting_space * 1)));
+
+    // createElement('p', 'Space between bands').parent('bands').position(-_setting_space, (_setting_start + (setting_space * 2)));
+    // createElement('p', 'Band StrokeWeight').parent('bands').position(0, (_setting_start + (setting_space * 2)));
+    // createElement('p', 'Mirrored band StrokeWeight').parent('bands').position(_setting_space, (_setting_start + (setting_space * 2)));
+
+    // createElement('p', 'Image Size').parent('imagesize').position(0, (_setting_start + (setting_space * 3)));
+
+    // createElement('p', 'Background Red').parent('image_color').position(-_setting_space, (_setting_start + (setting_space * 4)));
+    // createElement('p', 'Background Green').parent('image_color').position(0, (_setting_start + (setting_space * 4)));
+    // createElement('p', 'Background Blue').parent('image_color').position(_setting_space, (_setting_start + (setting_space * 4)));
+
+    // createElement('p', 'EQ Red').parent('eq_color').position(-_setting_space, (_setting_start + (setting_space * 5)));
+    // createElement('p', 'EQ Green').parent('eq_color').position(0, (_setting_start + (setting_space * 5)));
+    // createElement('p', 'EQ Blue').parent('eq_color').position(_setting_space, (_setting_start + (setting_space * 5)));
+
+    // createElement('p', 'EQ size (screen %)').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 6)));
+    // createElement('p', 'EQ vertical position (screen %)').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 6)));
+
+    // createElement('p', 'Mirror EQ').parent('eq').position(-_setting_space / 2, (_setting_start + (setting_space * 7)));
+    // createElement('p', 'Switch EQ').parent('eq').position(0, (_setting_start + (setting_space * 7)));
+    // createElement('p', 'Bounce Image').parent('eq').position(_setting_space / 2, (_setting_start + (setting_space * 7)));
+
+    // createElement('p', 'EQ Preset').parent('filter').position(-_setting_space / 2, (_setting_start + (setting_space * 8)));
+    // createElement('p', 'EQ Cutoff').parent('filter').position(_setting_space / 2, (_setting_start + (setting_space * 8)));
 }
 
 function settingsDownload() {
@@ -284,4 +371,9 @@ function settingsUpload() {
         }
     }
     input.click();
+}
+
+function connectSpotify() {
+    // console.log('SOPAS');
+    // currentSong = https://spotify.aidenwallis.co.uk/u/5e3207f18bdd560a8e9d515d
 }

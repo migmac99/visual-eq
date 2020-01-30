@@ -1,5 +1,5 @@
 let mic, fft, bassDetect;
-let canvas, logo, svg, settings, save_server, save_download, uploadSettings;
+let canvas, logo, svg, settings;
 
 let min, max, freq_cleaner;
 
@@ -38,6 +38,8 @@ function setup() {
     settingsToggle(); //Toggles settings overlay
 
     refresh();
+
+    // baseURL = window.localStorage.href;
 }
 
 function windowResized() {
