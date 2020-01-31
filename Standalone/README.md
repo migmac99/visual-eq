@@ -2,6 +2,7 @@ To start on macOS you need to open terminal and do the following
 
 ```
 chmod a+x
+```
 
 then drag the executable in front and press enter
 
