@@ -353,12 +353,13 @@ function settingsSave(download = false) {
     };
 
     console.log('Settings: \n' + JSON.stringify(settings, null, 2));
-
+    //console.log(download);
     if (!download) {
-        var data = JSON.stringify(settings);
-        var blank = window.open(getURL() + "update-settings/" + data);
-        setTimeout(() => { blank.close(); }, 100);
-        // console.log(getURL() + "update-settings/" + data);
+        // var data_ = JSON.stringify(settings); 
+        var data_ = encodeURIComponent(JSON.stringify(settings));
+        var blank_ = window.open(getURL() + "update-settings/" + data_);
+        setTimeout(() => { blank_.close(); }, 100);
+        console.log(getURL() + "update-settings/" + data_);
     } else {
         saveJSON(settings, 'settings.json');
     }

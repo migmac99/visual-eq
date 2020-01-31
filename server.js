@@ -53,9 +53,6 @@ var np_artist = 'Artist';
 var ifaces = os.networkInterfaces();
 var server = express();
 
-//required for pkg build
-path.join(__dirname, '../visual-eq/html');
-
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -96,6 +93,7 @@ Object.keys(ifaces).forEach(function(ifname) {
 
 //START HTML SERVER
 server.use(express.static(__dirname + "/html")); //Prevents MIME TYPE error by making html directory static and therefore usable
+server.use(express.static(__dirname + '/public')).use(cors()).use(cookieParser());
 
 server.get('/', function(req, res) {
     res.statusCode = 200;
@@ -113,7 +111,7 @@ server.get('/update-settings/:data', async function(req, res) {
     if (logging) {
         console.log('Saving new Settings to settings.json \n');
         console.log(settings_obj);
-        console.log();
+        console.log(data);
     }
 
     var settings = JSON.stringify(settings_obj, null, 2);
@@ -184,9 +182,7 @@ server.get('/artist', function(req, res) {
 
 
 //Spotify OAuth //////////////////////////////////////////////////////////////
-server.use(express.static(__dirname + '/public'))
-    .use(cors())
-    .use(cookieParser());
+server.use(express.static(__dirname + '/public')).use(cors()).use(cookieParser());
 
 server.get('/login', function(req, res) {
 
@@ -298,7 +294,7 @@ server.get('/refresh_token', function(req, res) {
 });
 
 
-server.get('*', function(req, res) { res.redirect('/'); }); //Redirects any incorrect links to main page
+// server.get('*', function(req, res) { res.redirect('/'); }); //Redirects any incorrect links to main page
 
 server.listen(PORT, () => {
     console.log(`Visual EQ Server running on port ${PORT}.\n`);

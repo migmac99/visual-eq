@@ -86,7 +86,7 @@ function refresh() {
 }
 
 function refresh_NowPlaying() {
-    console.log('Refreshed!');
+    // console.log('Refreshed!');
     document.getElementById('title_frame').contentWindow.location.reload();
     document.getElementById('artist_frame').contentWindow.location.reload();
 
