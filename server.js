@@ -53,9 +53,8 @@ var np_artist = 'Artist';
 var ifaces = os.networkInterfaces();
 var server = express();
 
-//var assets = path.join(__dirname, 'html');
+//required for pkg build
 path.join(__dirname, '../visual-eq/html');
-// server.use(express.static(path.join(__dirname, 'html')));
 
 /**
  * Generates a random string containing numbers and letters

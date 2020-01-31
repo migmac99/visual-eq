@@ -12,5 +12,11 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/migmac99/visual-eq"
+    },
+    "dependencies": {
+        "express": "*",
+        "cors": "*",
+        "cookie-parser": "*",
+        "spotify-web-api-js": "*"
     }
 }
