@@ -85,6 +85,19 @@ function refresh() {
     settingsNowPlaying(); //Now Playing settings
 }
 
+function refresh_NowPlaying() {
+    console.log('Refreshed!');
+    document.getElementById('title_frame').contentWindow.location.reload();
+    document.getElementById('artist_frame').contentWindow.location.reload();
+
+    if (document.getElementById('title_frame').contentWindow.document.getElementsByTagName("pre")[0].innerHTML != null) {
+        document.getElementById('title').innerHTML = document.getElementById('title_frame').contentWindow.document.getElementsByTagName("pre")[0].innerHTML;
+    }
+    if (document.getElementById('artist_frame').contentWindow.document.getElementsByTagName("pre")[0].innerHTML != null) {
+        document.getElementById('artist').innerHTML = document.getElementById('artist_frame').contentWindow.document.getElementsByTagName("pre")[0].innerHTML;
+    }
+}
+
 function draw() {
     //Applies colors from Settings (R,G,B)
     background(color(bg_r.value(), bg_g.value(), bg_b.value())); //Background Color
@@ -196,6 +209,7 @@ function draw() {
 document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.keyCode == 27) { //Escape key
+        refresh_NowPlaying();
         // updateSVG();
         // console.log("=============================================");
         // console.log("fft.Analyse() -> ", fft.analyze());

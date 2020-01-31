@@ -43,6 +43,11 @@ var scope = 'user-read-currently-playing user-read-playback-state'; //Spotify au
 var SpotifyWebApi = require('spotify-web-api-node');
 var spotifyApi = new SpotifyWebApi();
 
+//Now Playing vars
+var authorized = 0;
+var np_song = 'Song';
+var np_artist = 'Artist';
+
 var ifaces = os.networkInterfaces();
 var server = express();
 
@@ -120,31 +125,58 @@ server.get('/nowPlaying/:data', async function(req, res) {
     //Set token
     spotifyApi.setAccessToken(nowPlaying_obj.access_token);
 
-    //Get playback state from user via token
-    spotifyApi.getMyCurrentPlaybackState()
-        .then(function(data) {
-            // Output items
-            var item = data.body.item;
-            var song = item.album.name;
-            var artists;
-            // console.log("Now Playing: ", item);
-
-            for (i = 0; i < item.artists.length; i++) {
-                if (i == 0) {
-                    artists = item.artists[i].name;
-                } else {
-                    artists += ', ' + item.artists[i].name;
-                }
-            }
-            console.log('\nAlbum: ', song, '\nArtists: ', artists);
-
-
-        }, function(err) {
-            console.log('Something went wrong!', err);
-        });
+    authorized = 1;
+    UpdateNP();
 
     res.redirect('/');
 });
+
+function UpdateNP() {
+    //Only refreshes if spotify has been authorized
+    if (authorized == 1) {
+        spotifyApi.getMyCurrentPlaybackState()
+            .then(function(data) {
+                // Output items
+                var item = data.body.item;
+                var song = item.album.name;
+                var artists;
+                // console.log("Now Playing: ", item);
+
+                for (i = 0; i < item.artists.length; i++) {
+                    if (i == 0) {
+                        artists = item.artists[i].name;
+                    } else {
+                        artists += ', ' + item.artists[i].name;
+                    }
+                }
+                // console.log('\nAlbum: ', song, '\nArtists: ', artists);
+                np_song = song;
+                np_artist = artists;
+
+            }, function(err) {
+                console.log('Something went wrong!', err);
+            });
+    } else {
+        np_song = 'Song';
+        np_artist = 'Artist';
+    }
+};
+
+//Refreshes NowPlaying every 1000 miliseconds
+setInterval(UpdateNP, 1000);
+
+server.get('/title', function(req, res) {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write(np_song);
+    res.end();
+});
+
+server.get('/artist', function(req, res) {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.write(np_artist);
+    res.end();
+});
+
 
 //Spotify OAuth //////////////////////////////////////////////////////////////
 server.use(express.static(__dirname + '/public'))
@@ -215,9 +247,7 @@ server.get('/callback', function(req, res) {
 
 
                 // use the access token to access the Spotify Web API
-                request.get(options, function(error, response, body) {
-                    //console.log(body);
-                });
+                request.get(options, function(error, response, body) {});
 
                 // we can also pass the token to the browser to make requests from there
                 // res.redirect('/#' +

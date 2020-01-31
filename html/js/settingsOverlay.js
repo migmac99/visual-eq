@@ -453,4 +453,11 @@ function settingsNowPlaying() {
     }
 }
 
+setInterval(function() {
+    if (np_use_link.value() == 0) {
+        refresh_NowPlaying();
+    }
+}, 1000);
+
+
 // currentSong = https://spotify.aidenwallis.co.uk/u/5e3207f18bdd560a8e9d515d
