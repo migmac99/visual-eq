@@ -24,6 +24,8 @@ const PORT = 8000; //server port [80 is default for web]
 
 var os = require('os');
 var fs = require('fs');
+var path = require('path');
+
 
 var express = require('express');
 
@@ -50,6 +52,10 @@ var np_artist = 'Artist';
 
 var ifaces = os.networkInterfaces();
 var server = express();
+
+//var assets = path.join(__dirname, 'html');
+path.join(__dirname, '../visual-eq/html');
+// server.use(express.static(path.join(__dirname, 'html')));
 
 /**
  * Generates a random string containing numbers and letters
