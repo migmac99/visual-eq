@@ -1,0 +1,16 @@
+{
+    "name": "alltway-visual-eq",
+    "version": "0.1.0",
+    "description": "AllTWay Visual EQ project by Migmac",
+    "author": "Miguel Matos",
+    "bin": "server.js",
+    "pkg": {
+        "assets": [
+            "html/**/*"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/migmac99/visual-eq"
+    }
+}
