@@ -359,7 +359,7 @@ function settingsSave(download = false) {
         var data_ = encodeURIComponent(JSON.stringify(settings));
         var blank_ = window.open(getURL() + "update-settings/" + data_);
         setTimeout(() => { blank_.close(); }, 100);
-        console.log(getURL() + "update-settings/" + data_);
+        // console.log(getURL() + "update-settings/" + data_);
     } else {
         saveJSON(settings, 'settings.json');
     }
