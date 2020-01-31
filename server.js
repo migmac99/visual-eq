@@ -40,9 +40,8 @@ var stateKey = 'spotify_auth_state';
 var scope = 'user-read-currently-playing user-read-playback-state'; //Spotify auth scope
 
 //Spotify Web API
-var Spotify = require('spotify-web-api-js');
-var s = new Spotify();
-
+var SpotifyWebApi = require('spotify-web-api-node');
+var spotifyApi = new SpotifyWebApi();
 
 var ifaces = os.networkInterfaces();
 var server = express();
@@ -116,9 +115,33 @@ server.get('/nowPlaying/:data', async function(req, res) {
     var data = String(req.params.data);
     var nowPlaying_obj = JSON.parse(data);
 
-    console.log('Access_Token =', nowPlaying_obj.access_token, '\n \nRefresh_Token =', nowPlaying_obj.refresh_token);
-    //DO STUFF WITH THE TOKENS
+    // console.log('Access_Token =', nowPlaying_obj.access_token, '\n \nRefresh_Token =', nowPlaying_obj.refresh_token);
 
+    //Set token
+    spotifyApi.setAccessToken(nowPlaying_obj.access_token);
+
+    //Get playback state from user via token
+    spotifyApi.getMyCurrentPlaybackState()
+        .then(function(data) {
+            // Output items
+            var item = data.body.item;
+            var song = item.album.name;
+            var artists;
+            // console.log("Now Playing: ", item);
+
+            for (i = 0; i < item.artists.length; i++) {
+                if (i == 0) {
+                    artists = item.artists[i].name;
+                } else {
+                    artists += ', ' + item.artists[i].name;
+                }
+            }
+            console.log('\nAlbum: ', song, '\nArtists: ', artists);
+
+
+        }, function(err) {
+            console.log('Something went wrong!', err);
+        });
 
     res.redirect('/');
 });
