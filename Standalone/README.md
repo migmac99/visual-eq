@@ -1,4 +1,4 @@
-To start on macOS you need to open terminal and do the following
+To start on macOS you need to `open Terminal` and do the following
 
 ```
 chmod a+x
