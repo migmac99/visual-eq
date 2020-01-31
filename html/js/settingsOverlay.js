@@ -4,7 +4,7 @@ let bg_r, bg_g, bg_b, eq_r, eq_g, eq_b; // Colors
 let eq_size, eq_height, eq_mirrored, eq_switched, eq_bounce, eq_preset, eq_cutoff; //EQ Stuff
 let np_enabled, np_link, np_use_link, np_x, np_y; // Now Playing
 
-let save_server, save_download, uploadSettings, linkNowPlaying; //Buttons
+let save_server, save_download, uploadSettings, linkNowPlaying, linkSpotify; //Buttons
 
 let settingsEnabled = true;
 let hasRunMouse = false;
@@ -85,6 +85,10 @@ function settingsCreateButtons() {
     linkNowPlaying = createButton(' Set Widget Link ');
     linkNowPlaying.class('button');
     linkNowPlaying.mousePressed(NowPlaying_PromptLink);
+
+    linkSpotify = createButton(' Link Spotify [Server] ');
+    linkSpotify.class('button');
+    linkSpotify.mousePressed(NowPlaying_LinkSpotify);
 }
 
 function settingsMoveToDivs() {
@@ -138,6 +142,8 @@ function settingsMoveToDivs() {
     //np_link.parent('NowPlaying');
     np_use_link.parent('NowPlaying');
     linkNowPlaying.parent('NowPlaying');
+    //
+    linkSpotify.parent('NowPlaying');
     //////////////////////////////////////////////
 
 
@@ -249,6 +255,8 @@ function settingsPosition() {
     //
     np_use_link.position(((windowWidth / 2) - 20 - _setting_space / 2), (setting_start + (setting_space * 4)));
     linkNowPlaying.position((windowWidth / 2) - (linkNowPlaying.width / 2) + _setting_space / 2, (setting_start - 5 + (setting_space * 4)));
+    //
+    linkSpotify.position((windowWidth / 2) - (linkNowPlaying.width / 2), (setting_start - 5 + (setting_space * 5)));
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -409,6 +417,10 @@ function NowPlaying_PromptLink() {
         np_link = settings.np_link;
     }
     refresh();
+}
+
+function NowPlaying_LinkSpotify() {
+    window.location.href = 'http://localhost:8000/login';
 }
 
 function NowPlaying_Move() {
