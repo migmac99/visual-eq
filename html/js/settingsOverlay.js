@@ -366,14 +366,19 @@ function settingsSave(download = false) {
 }
 
 function settingsUpload() {
-    var input = document.createElement('input');
+    var input = document.getElementById('Input');
+    // input.parent('Input');
     input.type = 'file';
     input.accept = 'application/json';
+
+    console.log(1);
 
     input.onchange = e => {
         var file = e.target.files[0];
         var reader = new FileReader();
         reader.readAsText(file);
+
+        console.log(2);
 
         reader.onload = readerEvent => {
             var content = JSON.parse(readerEvent.target.result);
