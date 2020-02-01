@@ -210,17 +210,29 @@ document.onkeydown = function(evt) {
     evt = evt || window.event;
     if (evt.keyCode == 27) { //Escape key
         refresh_NowPlaying();
-        // updateSVG();
-        // console.log("=============================================");
-        // console.log("fft.Analyse() -> ", fft.analyze());
-        // console.log("=============================================");
-        // console.log("Spectrum ------> ", spectrum);
-        // console.log("=============================================");
-        // console.log("_Spectrum -----> ", _spectrum);
-        // console.log("=============================================");
-        // console.log("fft.Analyse() Length -> ", fft.analyze().length);
-        // console.log("Spectrum Length ------> ", spectrum.length);
-        // console.log("_Spectrum Length -----> ", _spectrum.length);
-        // console.log("=============================================");
     }
+    if (evt.keyCode == 32) { //Spacebar
+        if (np_enabled.value() == 1) {
+            np_enabled.value(0);
+        } else {
+            np_enabled.value(1);
+        }
+        settingsNowPlaying();
+        refresh_NowPlaying();
+    }
+    if (evt.keyCode == 13) { //Enter
+        NowPlaying_LinkSpotify();
+    }
+    // updateSVG();
+    // console.log("=============================================");
+    // console.log("fft.Analyse() -> ", fft.analyze());
+    // console.log("=============================================");
+    // console.log("Spectrum ------> ", spectrum);
+    // console.log("=============================================");
+    // console.log("_Spectrum -----> ", _spectrum);
+    // console.log("=============================================");
+    // console.log("fft.Analyse() Length -> ", fft.analyze().length);
+    // console.log("Spectrum Length ------> ", spectrum.length);
+    // console.log("_Spectrum Length -----> ", _spectrum.length);
+    // console.log("=============================================");
 };
