@@ -376,37 +376,35 @@ function settingsUpload() {
         reader.readAsText(file);
 
         reader.onload = readerEvent => {
-            let content = JSON.parse(readerEvent.target.result);
+            var content = JSON.parse(readerEvent.target.result);
 
-            if (content.image_path) { image_path = content.image_path; } else { image_path = settings.image_path; }
+            if (content.image_path != null) { image_path = content.image_path; } else { image_path = settings.image_path; }
 
-            if (content.smooth) { smooth.value(content.smooth); } else { smooth.value(settings.smooth); }
+            if (content.smooth != null) { smooth.value(content.smooth); } else { smooth.value(settings.smooth); }
 
-            if (content.bandspace) { bandspace.value(content.bandspace); } else { bandspace.value(settings.bandspace); }
-            if (content.bandstroke) { bandstroke.value(content.bandstroke); } else { bandstroke.value(settings.bandstroke); }
-            if (content.bandstroke_mirrored) { bandstroke_mirrored.value(content.bandstroke_mirrored); } else { bandstroke_mirrored.value(settings.bandstroke_mirrored); }
-            if (content.imagesize) { imagesize.value(content.imagesize); } else { imagesize.value(settings.imagesize); }
-            if (content.bg_r) { bg_r.value(content.bg_r); } else { bg_r.value(settings.bg_r); }
-            if (content.bg_g) { bg_g.value(content.bg_g); } else { bg_g.value(settings.bg_g); }
-            if (content.bg_b) { bg_b.value(content.bg_b); } else { bg_b.value(settings.bg_b); }
-            if (content.eq_r) { eq_r.value(content.eq_r); } else { eq_r.value(settings.eq_r); }
-            if (content.eq_g) { eq_g.value(content.eq_g); } else { eq_g.value(settings.eq_g); }
-            if (content.eq_b) { eq_b.value(content.eq_b); } else { eq_b.value(settings.eq_b); }
-            if (content.eq_size) { eq_size.value(content.eq_size); } else { eq_size.value(settings.eq_size); }
-            if (content.eq_height) { eq_height.value(content.eq_height); } else { eq_height.value(settings.eq_height); }
-            if (content.eq_mirrored) { eq_mirrored.value(content.eq_mirrored); } else { eq_mirrored.value(settings.eq_mirrored); }
-            if (content.eq_switched) { eq_switched.value(content.eq_switched); } else { eq_switched.value(settings.eq_switched); }
-            if (content.eq_bounce) { eq_bounce.value(content.eq_bounce); } else { eq_bounce.value(settings.eq_bounce); }
-            if (content.eq_preset) { eq_preset.value(content.eq_preset); } else { eq_preset.value(settings.eq_preset); }
-            if (content.eq_cutoff) { eq_cutoff.value(content.eq_cutoff); } else { eq_cutoff.value(settings.eq_cutoff); }
+            if (content.bandspace != null) { bandspace.value(content.bandspace); } else { bandspace.value(settings.bandspace); }
+            if (content.bandstroke != null) { bandstroke.value(content.bandstroke); } else { bandstroke.value(settings.bandstroke); }
+            if (content.bandstroke_mirrored != null) { bandstroke_mirrored.value(content.bandstroke_mirrored); } else { bandstroke_mirrored.value(settings.bandstroke_mirrored); }
+            if (content.imagesize != null) { imagesize.value(content.imagesize); } else { imagesize.value(settings.imagesize); }
+            if (content.bg_r != null) { bg_r.value(content.bg_r); } else { bg_r.value(settings.bg_r); }
+            if (content.bg_g != null) { bg_g.value(content.bg_g); } else { bg_g.value(settings.bg_g); }
+            if (content.bg_b != null) { bg_b.value(content.bg_b); } else { bg_b.value(settings.bg_b); }
+            if (content.eq_r != null) { eq_r.value(content.eq_r); } else { eq_r.value(settings.eq_r); }
+            if (content.eq_g != null) { eq_g.value(content.eq_g); } else { eq_g.value(settings.eq_g); }
+            if (content.eq_b != null) { eq_b.value(content.eq_b); } else { eq_b.value(settings.eq_b); }
+            if (content.eq_size != null) { eq_size.value(content.eq_size); } else { eq_size.value(settings.eq_size); }
+            if (content.eq_height != null) { eq_height.value(content.eq_height); } else { eq_height.value(settings.eq_height); }
+            if (content.eq_mirrored != null) { eq_mirrored.value(content.eq_mirrored); } else { eq_mirrored.value(settings.eq_mirrored); }
+            if (content.eq_switched != null) { eq_switched.value(content.eq_switched); } else { eq_switched.value(settings.eq_switched); }
+            if (content.eq_bounce != null) { eq_bounce.value(content.eq_bounce); } else { eq_bounce.value(settings.eq_bounce); }
+            if (content.eq_preset != null) { eq_preset.value(content.eq_preset); } else { eq_preset.value(settings.eq_preset); }
+            if (content.eq_cutoff != null) { eq_cutoff.value(content.eq_cutoff); } else { eq_cutoff.value(settings.eq_cutoff); }
 
-            if (content.np_enabled) { np_enabled.value(content.np_enabled); } else { np_enabled.value(settings.np_enabled); }
-            if (content.np_link) { np_link = content.np_link; } else { np_link = settings.np_link; }
-            if (content.np_use_link) { np_use_link.value(content.np_use_link); } else { np_use_link.value(settings.np_use_link); }
-            if (content.np_x) { np_x.value(content.np_x); } else { np_x.value(settings.np_x); }
-            if (content.np_y) { np_y.value(content.np_y); } else { np_y.value(settings.np_y); }
-
-            refresh();
+            if (content.np_enabled != null) { np_enabled.value(content.np_enabled); } else { np_enabled.value(settings.np_enabled); }
+            if (content.np_link != null) { np_link = content.np_link; } else { np_link = settings.np_link; }
+            if (content.np_use_link != null) { np_use_link.value(content.np_use_link); } else { np_use_link.value(settings.np_use_link); }
+            if (content.np_x != null) { np_x.value(content.np_x); } else { np_x.value(settings.np_x); }
+            if (content.np_y != null) { np_y.value(content.np_y); } else { np_y.value(settings.np_y); }
         }
     }
     input.click();
