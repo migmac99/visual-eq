@@ -30,6 +30,7 @@ To-Do:
 - [X] Node.js server running the visual eq
 - [X] Spotify Integration
 - [X] Artist/Song information option
+- [ ] Optimize for weaker devices
 
 
 ## Installing Node
