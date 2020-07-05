@@ -25,7 +25,7 @@ This project is a visual equalizer that runs on a nodejs server, the visualiser 
     - [Temporary failure resolving...](#temporary-failure-resolving)
   
 
-To-Do:
+Features:
 - [X] HTML/JS FFT Renderer
 - [X] Node.js server running the visual eq
 - [X] Spotify Integration
