@@ -1,0 +1,21 @@
+{
+  "image_path": "svg/mana1.svg",
+  "smooth": "0.86",
+  "bandspace": "20",
+  "bandstroke": "3.1",
+  "bandstroke_mirrored": "0.3",
+  "imagesize": "0.6",
+  "bg_r": "1",
+  "bg_g": "24",
+  "bg_b": "32",
+  "eq_r": "233",
+  "eq_g": "112",
+  "eq_b": "220",
+  "eq_size": "0.68",
+  "eq_height": "0.78",
+  "eq_mirrored": "1",
+  "eq_switched": "1",
+  "eq_bounce": "0",
+  "eq_preset": "2",
+  "eq_cutoff": "0.88"
+}
