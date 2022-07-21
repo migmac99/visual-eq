@@ -208,10 +208,10 @@ function draw() {
 
 document.onkeydown = function(evt) {
     evt = evt || window.event;
-    if (evt.keyCode == 27) { //Escape key
+    if (evt.keycode == 27) { //Escape key
         refresh_NowPlaying();
     }
-    if (evt.keyCode == 32) { //Spacebar
+    if (evt.keycode == 32) { //Spacebar
         if (np_enabled.value() == 1) {
             np_enabled.value(0);
         } else {
@@ -220,7 +220,7 @@ document.onkeydown = function(evt) {
         settingsNowPlaying();
         refresh_NowPlaying();
     }
-    if (evt.keyCode == 13) { //Enter
+    if (evt.keycode == 13) { //Enter
         NowPlaying_LinkSpotify();
     }
     // updateSVG();
